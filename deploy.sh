@@ -136,13 +136,22 @@ PROJ_PKG="com.spocky.projengmenu"
 $ADB_BIN shell appops set "$PROJ_PKG" SYSTEM_ALERT_WINDOW allow >/dev/null 2>&1 || true
 $ADB_BIN shell pm grant "$PROJ_PKG" android.permission.WRITE_SECURE_SETTINGS >/dev/null 2>&1 || true
 
+# Anti-LMK Kill: Add to Doze/Battery whitelist
+$ADB_BIN shell dumpsys deviceidle whitelist +"$PROJ_PKG" >/dev/null 2>&1 || true
+
 # Enable accessibility service for Projectivy to hijack Home key smoothly
 $ADB_BIN shell settings put secure enabled_accessibility_services "$PROJ_PKG/$PROJ_PKG.services.AccessibilityService" >/dev/null 2>&1 || true
 $ADB_BIN shell settings put secure accessibility_enabled 1 >/dev/null 2>&1 || true
-echo "    [✓] 已授予 Projectivy Launcher 悬浮窗与按键捕获权限"
+echo "    [✓] 已授予 Projectivy Launcher 悬浮窗、内存白名单与按键捕获权限"
+
+# Pre-flight Verification before disabling stock launcher
+echo "[*] 正在执行桌面拉起与预检测试..."
+$ADB_BIN shell am start -n "$PROJ_PKG/.MainActivity" >/dev/null 2>&1 || true
+sleep 1
 
 # Disable Xiaomi Stock Launcher
 echo "[*] 正在切换默认桌面为 Apple 极简桌面..."
+$ADB_BIN shell cmd package set-home-activity "$PROJ_PKG/.MainActivity" >/dev/null 2>&1 || true
 $ADB_BIN shell pm disable-user --user 0 com.mitv.tvhome >/dev/null 2>&1 || true
 echo "    [✓] 已安全停用小米原生瀑布流桌面 (随时可通过 restore_redmi_tv.sh 一键恢复)"
 
