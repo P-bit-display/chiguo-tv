@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <img src="docs/banner.jpg" alt="赤果 ChiGuo · RedApple TV" width="100%">
+</p>
+
+<p align="center">
   <a href="README.en.md">English</a> · 
   <a href="README.md">简体中文</a> · 
   <b>繁體中文</b> · 
