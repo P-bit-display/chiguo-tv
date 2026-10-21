@@ -99,6 +99,13 @@ install_apk "家庭影院 NAS 客户端 (Jellyfin)" "Jellyfin.apk"
 echo ""
 echo "[*] 步骤 3/4: 净化底层广告与无用后台应用 (安全停用模式)..."
 
+# 清理开机广告本地预缓存（社区推荐关键步骤，防止断网播放旧缓存广告）
+echo "    [*] 清理电视本地广告视频与图片缓存..."
+$ADB_BIN shell pm clear com.miui.systemAdSolution >/dev/null 2>&1 || true
+$ADB_BIN shell pm clear com.xiaomi.mitv.advertise >/dev/null 2>&1 || true
+$ADB_BIN shell rm -rf /sdcard/Android/data/com.xiaomi.mitv.advertise/files/* >/dev/null 2>&1 || true
+$ADB_BIN shell rm -rf /sdcard/Android/data/com.miui.systemAdSolution/cache/* >/dev/null 2>&1 || true
+
 DEBLOAT_LIST=(
     "com.miui.systemAdSolution"
     "com.xiaomi.mitv.advertise"
