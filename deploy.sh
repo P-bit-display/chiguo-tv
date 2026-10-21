@@ -70,9 +70,9 @@ BUILD="$($ADB_BIN shell getprop ro.build.version.release | tr -d '\r')"
 echo "    设备型号: $MODEL (Android $BUILD)"
 echo "    系统备份已保存至: $BACKUP_DIR/packages_$TIMESTAMP.txt"
 
-# 3. Install 4 Core APKs
+# 3. Install Core & Extended APKs
 echo ""
-echo "[*] 步骤 2/4: 静默推送并安装核心软件四大件..."
+echo "[*] 步骤 2/4: 静默推送并安装系统与影音生态应用..."
 
 install_apk() {
     local name="$1"
@@ -86,14 +86,23 @@ install_apk() {
             echo "    [!] $name 安装结果: $RES"
         fi
     else
-        echo "    [!] 警告: 未找到 $file"
+        echo "    [-] 跳过未下载应用: $file"
     fi
 }
 
+# 基础四件套
 install_apk "Apple TV 极简桌面 (Projectivy Launcher)" "ProjectivyLauncher.apk"
 install_apk "开机直达电视直播 (My-TV)" "MyTV.apk"
 install_apk "哔哩哔哩 TV版 (BBLL)" "BBLL.apk"
 install_apk "家庭影院 NAS 客户端 (Jellyfin)" "Jellyfin.apk"
+
+# 进阶与海外流媒体生态
+install_apk "科学上网工具 (FlClash TV遥控版)" "Clash.apk"
+install_apk "YouTube 电视版 (SmartTube 无广告 4K)" "SmartTube.apk"
+install_apk "全网免费影视聚合 (TVBox)" "TVBox.apk"
+install_apk "网易云音乐 TV版 (大屏黑胶)" "NetEaseMusic.apk"
+install_apk "Apple TV 同款 4K 航拍屏保 (AerialViews)" "AerialViews.apk"
+install_apk "局域网无线闪传 (LocalSend)" "LocalSend.apk"
 
 # 4. Debloat MIUI TV (Ad & Telemetry Disabling)
 echo ""
