@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <a href="README.en.md">English</a> · <b>简体中文</b>
+</p>
+
+<p align="center">
   <b>让红米/小米电视拥有 Apple tvOS 般极简优雅体验</b><br>
   <i>红米 (Red) + 苹果 (Apple) = 赤果 · 删繁就简，返璞归真</i>
 </p>
