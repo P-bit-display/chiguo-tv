@@ -106,6 +106,8 @@ install_apk "家庭影院 NAS 客户端 (Jellyfin)" "Jellyfin.apk"
 # 进阶与海外流媒体生态
 install_apk "科学上网工具 (FlClash TV遥控版)" "Clash.apk"
 install_apk "YouTube 电视版 (SmartTube 无广告 4K)" "SmartTube.apk"
+install_apk "海外流媒体聚合 (Stremio Android TV官方版)" "Stremio.apk"
+install_apk "开源应用市场 (Aurora Store 免GMS应用商店)" "AuroraStore.apk"
 install_apk "全网免费影视聚合 (TVBox)" "TVBox.apk"
 install_apk "网易云音乐 TV版 (大屏黑胶)" "NetEaseMusic.apk"
 install_apk "Apple TV 同款 4K 航拍屏保 (AerialViews)" "AerialViews.apk"

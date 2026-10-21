@@ -41,10 +41,11 @@
   - **Bilibili TV (BBLL)**: Supports up to 4K 120Hz, Dolby Vision, and silky-smooth danmaku.
   - **Private Home Cinema (Jellyfin)**: Direct LAN connection to Synology NAS media libraries with automated movie poster scraping and hardware VPU acceleration.
   - **SmartTube (YouTube for TV)**: 4K/8K 60fps HDR playback, SponsorBlock integration, zero ad interruptions, and no Google Play Services dependency.
+  - **Stremio for Android TV**: The global gold-standard open-source media streaming aggregation hub with add-on community support.
+  - **Aurora Store (TV Edition)**: FOSS alternative to Google Play Store, enabling one-click installation of Netflix, Disney+, Prime Video, Spotify, and Twitch without GMS.
+  - **Private Home Cinema (Jellyfin)**: Direct LAN connection to Synology NAS media libraries with automated movie poster scraping and hardware VPU acceleration.
   - **FlClash (TV-Optimized Proxy Client)**: 100% remote D-pad navigation support for rule-based routing (direct LAN/domestic streams, proxy for overseas media).
-  - **TVBox Aggregator**: Ultra-lightweight open-source player core supporting customizable external endpoints.
   - **Apple TV 4K Aerial Screensaver (AerialViews)**: High-resolution slow-motion 4K aerial screensavers (ISS earth orbit, global landmarks) during idle standby.
-  - **NetEase Cloud Music TV**: Vinyl record player UI for living room ambiance.
   - **LocalSend**: Cross-platform wireless LAN file/APK transfer from Mac, PC, or mobile without USB flash drives.
 - 🛡️ **10-Round Red/Blue Team Hardening**: Includes pre-flight health checks to prevent soft-bricks, memory-killer (Anti-LMK) immunity white-listing, and 100% preservation of XiaoAI voice button and HDMI-CEC input switching.
 - 🔄 **One-Click Reversible**: Includes a `restore.sh` rollback script that reinstates all stock components and the original Xiaomi launcher in 3 seconds.
