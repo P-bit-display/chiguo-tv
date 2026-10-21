@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/banner.jpg" alt="赤果 ChiGuo · RedApple TV" width="100%">
+  <img src="https://cdn.jsdelivr.net/gh/P-bit-display/chiguo-tv@main/docs/banner.jpg" alt="赤果 ChiGuo · RedApple TV" width="100%">
 </p>
 
 <p align="center">
