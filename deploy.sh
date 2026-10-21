@@ -23,13 +23,20 @@ if [ -z "$ADB_BIN" ]; then
 fi
 
 echo "=========================================================="
-echo "    红米电视 -> Apple TV 极简风格一键自动化配置工具       "
+echo "    🍎 赤果 (ChiGuo) · 红米/小米电视极简系统一键部署工具  "
 echo "=========================================================="
 echo ""
 
-# 1. Device IP
+# 1. Device IP & Mode Selection
 TV_IP="${1:-192.0.2.10}"
+MODE="${2:---apple-tv}" # --apple-tv (全能双模) or --pure-tv (纯看电视锁死模式)
+
 echo "[*] 目标电视 IP: $TV_IP"
+if [ "$MODE" == "--pure-tv" ]; then
+    echo "[*] 部署模式: 【纯看电视·长辈锁死模式】(Home键不退出演播，防误触)"
+else
+    echo "[*] 部署模式: 【全能双模·Apple TV极简模式】(开机看电视 + Home键切Apple桌面)"
+fi
 echo "[*] 正在连接电视 ADB (端口 5555)..."
 
 $ADB_BIN disconnect >/dev/null 2>&1 || true
@@ -158,18 +165,34 @@ echo "[*] 正在执行桌面拉起与预检测试..."
 $ADB_BIN shell am start -n "$PROJ_PKG/.MainActivity" >/dev/null 2>&1 || true
 sleep 1
 
-# Disable Xiaomi Stock Launcher
-echo "[*] 正在切换默认桌面为 Apple 极简桌面..."
-$ADB_BIN shell cmd package set-home-activity "$PROJ_PKG/.MainActivity" >/dev/null 2>&1 || true
-$ADB_BIN shell pm disable-user --user 0 com.mitv.tvhome >/dev/null 2>&1 || true
-echo "    [✓] 已安全停用小米原生瀑布流桌面 (随时可通过 restore_redmi_tv.sh 一键恢复)"
+# Disable Xiaomi Stock Launcher & Set Desired Mode
+echo "[*] 正在切换默认桌面..."
+if [ "$MODE" == "--pure-tv" ]; then
+    MYTV_PKG="com.mytv.android"
+    echo "    [*] 配置长辈纯看电视锁死模式: 将 My-TV 设为默认 Home..."
+    $ADB_BIN shell cmd package set-home-activity "$MYTV_PKG/.MainActivity" >/dev/null 2>&1 || true
+    $ADB_BIN shell pm disable-user --user 0 com.mitv.tvhome >/dev/null 2>&1 || true
+    $ADB_BIN shell am start -n "$MYTV_PKG/.MainActivity" >/dev/null 2>&1 || true
+    echo "    [✓] 长辈纯看电视锁死模式已就绪！按 Home 键或返回键永不跳出电视！"
+else
+    echo "    [*] 配置全能双模: 将 Projectivy 设为默认 Home..."
+    $ADB_BIN shell cmd package set-home-activity "$PROJ_PKG/.MainActivity" >/dev/null 2>&1 || true
+    $ADB_BIN shell pm disable-user --user 0 com.mitv.tvhome >/dev/null 2>&1 || true
+    echo "    [✓] Apple TV 极简桌面已就绪！(随时可通过 restore.sh 一键恢复)"
+fi
 
 echo ""
 echo "=========================================================="
 echo "                   🎉 自动化部署全部完成！                "
 echo "=========================================================="
-echo "接下来你可以："
-echo "1. 按一下电视遥控器【Home 主页键】，即刻进入 Apple TV 风格桌面！"
-echo "2. 在 Projectivy 桌面设置中勾选: 【开机自启】 -> 选择【我的电视 (My-TV)】"
-echo "3. 重启电视测试体验！"
+if [ "$MODE" == "--pure-tv" ]; then
+    echo "当前为【纯看电视·长辈锁死模式】："
+    echo "1. 电视屏幕正在全屏播放电视直播！"
+    echo "2. 遥控器上下键切台、左右键调音量，按 Home 键永不退出。"
+else
+    echo "当前为【全能双模·Apple TV极简模式】："
+    echo "1. 按一下电视遥控器【Home 主页键】，即刻进入 Apple TV 风格桌面！"
+    echo "2. 在 Projectivy 桌面设置中勾选: 【开机自启】 -> 选择【我的电视 (My-TV)】"
+    echo "3. 享受无广告开机直达电视直播、Home键随时切桌面的终极体验！"
+fi
 echo "=========================================================="
