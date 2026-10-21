@@ -50,6 +50,8 @@ while true; do
     DEVICE_STATE="$($ADB_BIN devices | grep "$TV_IP" | awk '{print $2}' || true)"
     if [ "$DEVICE_STATE" == "device" ]; then
         echo "[✓] 电视连接成功且已授权！"
+        # 唤醒电视屏幕 (KEYCODE_WAKEUP)
+        $ADB_BIN shell input keyevent 224 >/dev/null 2>&1 || true
         break
     elif [ "$DEVICE_STATE" == "unauthorized" ]; then
         echo "[!] 请注意电视屏幕：已弹出【允许USB/网络调试吗？】窗口，请用遥控器勾选【总是允许】并按【确定】！"

@@ -47,8 +47,21 @@
   - **FlClash (TV-Optimized Proxy Client)**: 100% remote D-pad navigation support for rule-based routing (direct LAN/domestic streams, proxy for overseas media).
   - **Apple TV 4K Aerial Screensaver (AerialViews)**: High-resolution slow-motion 4K aerial screensavers (ISS earth orbit, global landmarks) during idle standby.
   - **LocalSend**: Cross-platform wireless LAN file/APK transfer from Mac, PC, or mobile without USB flash drives.
-- 🛡️ **10-Round Red/Blue Team Hardening**: Includes pre-flight health checks to prevent soft-bricks, memory-killer (Anti-LMK) immunity white-listing, and 100% preservation of XiaoAI voice button and HDMI-CEC input switching.
+- 🛡️ **Enterprise-Grade Stability & Soft-Brick Protection**: Includes pre-flight health verification before switching launchers, memory-killer (Anti-LMK) immunity white-listing, and 100% preservation of XiaoAI voice controls and HDMI-CEC input switching.
 - 🔄 **One-Click Reversible**: Includes a `restore.sh` rollback script that reinstates all stock components and the original Xiaomi launcher in 3 seconds.
+
+---
+
+## ❓ Frequently Asked Questions (FAQ)
+
+**Q1: Does the XiaoAI / Voice Assistant button on the remote still work?**  
+A: **Yes, completely normal!** Our debloat policy strictly preserves `com.xiaomi.voiceassistant`. Pressing the voice button anywhere still summons the native translucent voice overlay for weather, volume control, and queries.
+
+**Q2: Will Mi Home (Smart Home / Smart Doorbell alerts) be affected?**  
+A: **Not affected at all!** The script preserves the Mi Home TV framework. Smart camera picture-in-picture, doorbell notifications, and home automations remain 100% intact.
+
+**Q3: How do I revert to the stock Xiaomi factory system?**  
+A: Simply run `./restore.sh <TV_IP>` on your computer. All stock packages and the original launcher will be re-enabled within 3 seconds, keeping your official warranty safe.
 
 ---
 
