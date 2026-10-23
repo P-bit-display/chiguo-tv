@@ -16,12 +16,16 @@
     {
       "file": "qist-spider.jar",
       "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/jar/spider.jar",
-      "md5": "f302b3d8b3b84ad823a720966d9a1dfc"
+      "md5": "f302b3d8b3b84ad823a720966d9a1dfc",
+      "source_path": "jar/spider.jar",
+      "sha256": "102fc7657c2cc78dc4ceaf02d442359455bf530d2bc07d10009149dc90853687"
     },
     {
       "file": "qist-fan.jar",
       "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/jar/fan.txt",
-      "md5": "654fb7dcb0aeaaea7dba0e662395f38e"
+      "md5": "654fb7dcb0aeaaea7dba0e662395f38e",
+      "source_path": "jar/fan.txt",
+      "sha256": "7783d0326547d9db37d6a1ff3c6db7262085051d9024af21f71b9efafffb61ca"
     }
   ]
 }

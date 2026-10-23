@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-23",
+  "original_channels": 115,
+  "active_channels": 112,
+  "excluded": [
+    {
+      "channel": "西藏藏语卫视",
+      "reason": "HTTP 404 confirmed on both computer and TV"
+    },
+    {
+      "channel": "SiTV欢笑剧场",
+      "reason": "HTTP 404 confirmed on both computer and TV"
+    },
+    {
+      "channel": "SiTV都市剧场",
+      "reason": "HTTP 404 confirmed on both computer and TV"
+    }
+  ],
+  "verification": "112 HLS manifests valid at check time; one live channel rendered on TV, not all channels playback-tested."
+}

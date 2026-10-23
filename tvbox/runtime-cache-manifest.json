@@ -1,0 +1,338 @@
+{
+  "upstream_commit": "94e797a1daf727c51a8a61c91388dd52a29f0057",
+  "files": [
+    {
+      "path": "FTY/drpy2.min.js",
+      "bytes": 67381,
+      "sha256": "1fd5ecd4077f106dfd3952c208d7d0a25762ca90d1ae416dde996065e1507ab9",
+      "local_fix": false,
+      "source_sha256": "1fd5ecd4077f106dfd3952c208d7d0a25762ca90d1ae416dde996065e1507ab9",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/FTY/drpy2.min.js"
+    },
+    {
+      "path": "FTY/兔小贝.js",
+      "bytes": 1009,
+      "sha256": "7173a949be786609d3c16cd02d9797889c6086a485aeff2f29bc77c602dc4676",
+      "local_fix": false,
+      "source_sha256": "7173a949be786609d3c16cd02d9797889c6086a485aeff2f29bc77c602dc4676",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/FTY/兔小贝.js"
+    },
+    {
+      "path": "FTY/斗鱼直播.js",
+      "bytes": 32258,
+      "sha256": "114a5ec86e6d48545ce0a99b1a5552380d735998737166e8fa3887479e04d64d",
+      "local_fix": false,
+      "source_sha256": "114a5ec86e6d48545ce0a99b1a5552380d735998737166e8fa3887479e04d64d",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/FTY/斗鱼直播.js"
+    },
+    {
+      "path": "FTY/虎牙.js",
+      "bytes": 46047,
+      "sha256": "efe1013ec759d66767d356f6769d79a697cb9ecdac44deb682a38b32f83e01fc",
+      "local_fix": false,
+      "source_sha256": "efe1013ec759d66767d356f6769d79a697cb9ecdac44deb682a38b32f83e01fc",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/FTY/虎牙.js"
+    },
+    {
+      "path": "js/360影视.js",
+      "bytes": 23845,
+      "sha256": "20d4aff0157ef7ec3793b7e717dfcf0160b5b2f4fbc0c5c8767c81ebf3fdcdd7",
+      "local_fix": false,
+      "source_sha256": "20d4aff0157ef7ec3793b7e717dfcf0160b5b2f4fbc0c5c8767c81ebf3fdcdd7",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/360影视.js"
+    },
+    {
+      "path": "js/A8音乐.js",
+      "bytes": 668,
+      "sha256": "82c2f0b4ffbd7a7969e4cc8b1817f120ba753a28de732fef741757e0c06d0733",
+      "local_fix": false,
+      "source_sha256": "82c2f0b4ffbd7a7969e4cc8b1817f120ba753a28de732fef741757e0c06d0733",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/A8音乐.js"
+    },
+    {
+      "path": "js/DJ音乐.js",
+      "bytes": 2225,
+      "sha256": "594536cb6545cae9a4d936bfdf0193f2e40fd5fdc4046583fe3cf65708cba5ad",
+      "local_fix": false,
+      "source_sha256": "594536cb6545cae9a4d936bfdf0193f2e40fd5fdc4046583fe3cf65708cba5ad",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/DJ音乐.js"
+    },
+    {
+      "path": "js/NT动漫.js",
+      "bytes": 25827,
+      "sha256": "a610fd6a854829434553d08214d89e8fa8210c4e62d210632ef873f40d608bbd",
+      "local_fix": false,
+      "source_sha256": "a610fd6a854829434553d08214d89e8fa8210c4e62d210632ef873f40d608bbd",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/NT动漫.js"
+    },
+    {
+      "path": "js/drpy.js",
+      "bytes": 14134,
+      "sha256": "81884aa26afd32abbdc54843033758748894ea3ed2e32e110478012d5ae69e81",
+      "local_fix": false,
+      "source_sha256": "81884aa26afd32abbdc54843033758748894ea3ed2e32e110478012d5ae69e81",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/drpy.js"
+    },
+    {
+      "path": "js/优酷.js",
+      "bytes": 73804,
+      "sha256": "05e8938bcf068b835795332e0e8e1171f4e4e6ff27021ecfdd874f8ec4cfb04e",
+      "local_fix": false,
+      "source_sha256": "05e8938bcf068b835795332e0e8e1171f4e4e6ff27021ecfdd874f8ec4cfb04e",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/优酷.js"
+    },
+    {
+      "path": "js/博看听书.js",
+      "bytes": 2039,
+      "sha256": "5f818fd317c5e2dae135bfa4e4024be0532f7478b8aebd81f971d16f2e059181",
+      "local_fix": false,
+      "source_sha256": "5f818fd317c5e2dae135bfa4e4024be0532f7478b8aebd81f971d16f2e059181",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/博看听书.js"
+    },
+    {
+      "path": "js/去看吧.js",
+      "bytes": 31221,
+      "sha256": "ba47e885e5fcc63850fe4aede1cb1d03d657e1079f32747cc6169cc09c25349e",
+      "local_fix": false,
+      "source_sha256": "ba47e885e5fcc63850fe4aede1cb1d03d657e1079f32747cc6169cc09c25349e",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/去看吧.js"
+    },
+    {
+      "path": "js/奇珍异兽.js",
+      "bytes": 28088,
+      "sha256": "707e5ab5a88b7171fdfc62d67673cd92cb292f292f6e552ab32fa8819430cf5d",
+      "local_fix": false,
+      "source_sha256": "707e5ab5a88b7171fdfc62d67673cd92cb292f292f6e552ab32fa8819430cf5d",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/奇珍异兽.js"
+    },
+    {
+      "path": "js/播客.js",
+      "bytes": 2008,
+      "sha256": "4e05039500cc83984703a9577823687c382c830fd4636f3f4fdb0b964813aa1c",
+      "local_fix": false,
+      "source_sha256": "4e05039500cc83984703a9577823687c382c830fd4636f3f4fdb0b964813aa1c",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/播客.js"
+    },
+    {
+      "path": "js/新闪雷.js",
+      "bytes": 2172,
+      "sha256": "ebca8d9521ec92073a609734fa26be243c8df09d65f639a760a54d4719ad23d8",
+      "local_fix": false,
+      "source_sha256": "ebca8d9521ec92073a609734fa26be243c8df09d65f639a760a54d4719ad23d8",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/新闪雷.js"
+    },
+    {
+      "path": "js/有声小说吧.js",
+      "bytes": 1830,
+      "sha256": "e6a7d875aa9c8b85f5127fcd6668ca6a1d53e9238b42a96d69d4278b21050c36",
+      "local_fix": false,
+      "source_sha256": "e6a7d875aa9c8b85f5127fcd6668ca6a1d53e9238b42a96d69d4278b21050c36",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/有声小说吧.js"
+    },
+    {
+      "path": "js/海洋听书.js",
+      "bytes": 2068,
+      "sha256": "e1b18b5521d47640b36de722a889f4880f77a3deaae6d412927f8cf3aa57ee79",
+      "local_fix": false,
+      "source_sha256": "e1b18b5521d47640b36de722a889f4880f77a3deaae6d412927f8cf3aa57ee79",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/海洋听书.js"
+    },
+    {
+      "path": "js/爱上你听书网.js",
+      "bytes": 985,
+      "sha256": "36db527e3bdc43f0be9da77c6acc3184d32f96bb45a93c326ebc403bb6e28ca1",
+      "local_fix": false,
+      "source_sha256": "36db527e3bdc43f0be9da77c6acc3184d32f96bb45a93c326ebc403bb6e28ca1",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/爱上你听书网.js"
+    },
+    {
+      "path": "js/百忙无果.js",
+      "bytes": 10871,
+      "sha256": "ed32cbe62efcc45cd4ce301228410f9ab3543f5c1b6ca79974ad09e1044e2c53",
+      "local_fix": false,
+      "source_sha256": "ed32cbe62efcc45cd4ce301228410f9ab3543f5c1b6ca79974ad09e1044e2c53",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/百忙无果.js"
+    },
+    {
+      "path": "js/网易公版影像.js",
+      "bytes": 1085,
+      "sha256": "2fff46dbe0bc35b3c1f6c3c97cca224f5e2335245a8520726ce90d69bdcb69f8",
+      "local_fix": true,
+      "source_sha256": "2609ce317100396c3bdf9f966eedc9e653f5bc2d1cf2b299dbe8ab13bbe7a31d",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/网易公版影像.js"
+    },
+    {
+      "path": "js/腾云驾雾.js",
+      "bytes": 33154,
+      "sha256": "edda360fb0034f708b87719ed722a6e7684d5ac106f2b7bf889324d0102173a0",
+      "local_fix": false,
+      "source_sha256": "edda360fb0034f708b87719ed722a6e7684d5ac106f2b7bf889324d0102173a0",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/腾云驾雾.js"
+    },
+    {
+      "path": "js/茶杯狐.js",
+      "bytes": 3811,
+      "sha256": "c99234928c762151f57bc9b37abe372c7848208f4f8a0934ec6958e1a877dcb4",
+      "local_fix": false,
+      "source_sha256": "c99234928c762151f57bc9b37abe372c7848208f4f8a0934ec6958e1a877dcb4",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/茶杯狐.js"
+    },
+    {
+      "path": "js/菜狗.js",
+      "bytes": 17612,
+      "sha256": "2c7b012b754f9606164bb3541b955a12e7e4baf8736abe9218c4420ba5335a1d",
+      "local_fix": false,
+      "source_sha256": "2c7b012b754f9606164bb3541b955a12e7e4baf8736abe9218c4420ba5335a1d",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/菜狗.js"
+    },
+    {
+      "path": "js/蜻蜓FM.js",
+      "bytes": 1225,
+      "sha256": "f99989b1e0df3b9984fa875c5958dc79b80ef9eaffd9ff7d8a509fd37648686d",
+      "local_fix": false,
+      "source_sha256": "f99989b1e0df3b9984fa875c5958dc79b80ef9eaffd9ff7d8a509fd37648686d",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/蜻蜓FM.js"
+    },
+    {
+      "path": "js/路漫漫.js",
+      "bytes": 16510,
+      "sha256": "1a0eb51705ae674bad0df4c9af44396c2ec0804bd311848e2cd7c7dbcb25c76f",
+      "local_fix": false,
+      "source_sha256": "1a0eb51705ae674bad0df4c9af44396c2ec0804bd311848e2cd7c7dbcb25c76f",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/路漫漫.js"
+    },
+    {
+      "path": "js/酷6网.js",
+      "bytes": 888,
+      "sha256": "ba8706db408dbdb54e9d1f5a32725e4f2b93319c8886889957d66b4fcddffe83",
+      "local_fix": false,
+      "source_sha256": "ba8706db408dbdb54e9d1f5a32725e4f2b93319c8886889957d66b4fcddffe83",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/js/酷6网.js"
+    },
+    {
+      "path": "json/CZKT.json",
+      "bytes": 41230,
+      "sha256": "2a66c0f6f72eddf3be0617f647ed5498dc37d0aa391e69fd3f55b04014c96c1d",
+      "local_fix": false,
+      "source_sha256": "2a66c0f6f72eddf3be0617f647ed5498dc37d0aa391e69fd3f55b04014c96c1d",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/json/CZKT.json"
+    },
+    {
+      "path": "json/GZKT.json",
+      "bytes": 46427,
+      "sha256": "696eac8f55eb7954ff06792736165625476eb17385f24f0ec802ffd8f1c27ff0",
+      "local_fix": false,
+      "source_sha256": "696eac8f55eb7954ff06792736165625476eb17385f24f0ec802ffd8f1c27ff0",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/json/GZKT.json"
+    },
+    {
+      "path": "json/SEJY.json",
+      "bytes": 12537,
+      "sha256": "457e8550665081309699a96b1b2a529e9e2f85250776d026d3043b541c1de4f0",
+      "local_fix": false,
+      "source_sha256": "457e8550665081309699a96b1b2a529e9e2f85250776d026d3043b541c1de4f0",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/json/SEJY.json"
+    },
+    {
+      "path": "json/XXKT.json",
+      "bytes": 30934,
+      "sha256": "50f7d84e962d1ae53f321c25638ff239e3aef0f70f2a36d2879a894203ffe635",
+      "local_fix": false,
+      "source_sha256": "50f7d84e962d1ae53f321c25638ff239e3aef0f70f2a36d2879a894203ffe635",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/json/XXKT.json"
+    },
+    {
+      "path": "lib/drpy-core-lite.min.js",
+      "bytes": 708488,
+      "sha256": "18bab373dfa67a4956f25f273fafb3e5b6b9fdf7bafb21acf0f6264b474900f5",
+      "local_fix": false,
+      "source_sha256": "18bab373dfa67a4956f25f273fafb3e5b6b9fdf7bafb21acf0f6264b474900f5",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/lib/drpy-core-lite.min.js"
+    },
+    {
+      "path": "lib/drpy2.min.js",
+      "bytes": 111826,
+      "sha256": "67f4f6b460db1ec7ef50585953ce826c5263ca91d72958490ef4702b4e154fe1",
+      "local_fix": false,
+      "source_sha256": "67f4f6b460db1ec7ef50585953ce826c5263ca91d72958490ef4702b4e154fe1",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/lib/drpy2.min.js"
+    },
+    {
+      "path": "py/Didahd.py",
+      "bytes": 11297,
+      "sha256": "8952b6c96b5cbe269b57cf6175adae93611f3a9f13b3562c3bae05eb12cb40d7",
+      "local_fix": false,
+      "source_sha256": "8952b6c96b5cbe269b57cf6175adae93611f3a9f13b3562c3bae05eb12cb40d7",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/Didahd.py"
+    },
+    {
+      "path": "py/ITalkBBTV.py",
+      "bytes": 10066,
+      "sha256": "b1582caa207bb40996244b7df3f46f0d08a57bacec37ce7190599d80046bceaa",
+      "local_fix": false,
+      "source_sha256": "b1582caa207bb40996244b7df3f46f0d08a57bacec37ce7190599d80046bceaa",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/ITalkBBTV.py"
+    },
+    {
+      "path": "py/Ncat.py",
+      "bytes": 12689,
+      "sha256": "106f7357f7fd9012c0b1c57433ededd37abf1219aa6b11b46e494f588394fb34",
+      "local_fix": false,
+      "source_sha256": "106f7357f7fd9012c0b1c57433ededd37abf1219aa6b11b46e494f588394fb34",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/Ncat.py"
+    },
+    {
+      "path": "py/OleLive.py",
+      "bytes": 9453,
+      "sha256": "6769cc5a56a9dbb33ab0cd3c5adbd873a20c22befffafd7f7cb48f294e66175a",
+      "local_fix": false,
+      "source_sha256": "6769cc5a56a9dbb33ab0cd3c5adbd873a20c22befffafd7f7cb48f294e66175a",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/OleLive.py"
+    },
+    {
+      "path": "py/TVB云播.py",
+      "bytes": 16997,
+      "sha256": "cdbc86774b03ac922cfdd2c34662dac21fec378cd9c5e41cd0e9ac3cf1e852e3",
+      "local_fix": false,
+      "source_sha256": "cdbc86774b03ac922cfdd2c34662dac21fec378cd9c5e41cd0e9ac3cf1e852e3",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/TVB云播.py"
+    },
+    {
+      "path": "py/世界听书.py",
+      "bytes": 28072,
+      "sha256": "37537610edfde114411835fd182116a888f2a4710f879abdcc6cdc7448f4e2b0",
+      "local_fix": false,
+      "source_sha256": "37537610edfde114411835fd182116a888f2a4710f879abdcc6cdc7448f4e2b0",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/世界听书.py"
+    },
+    {
+      "path": "py/华数.py",
+      "bytes": 27881,
+      "sha256": "f705f46a57f1c8149cd82f9c2b8c1842658d46e686a0701c022181a03b129aee",
+      "local_fix": false,
+      "source_sha256": "f705f46a57f1c8149cd82f9c2b8c1842658d46e686a0701c022181a03b129aee",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/华数.py"
+    },
+    {
+      "path": "py/华谊影视.py",
+      "bytes": 32431,
+      "sha256": "bf05f0aefe1a928fb604ab1a87451ee2130944f4d90601b3c956e119d11648e6",
+      "local_fix": false,
+      "source_sha256": "bf05f0aefe1a928fb604ab1a87451ee2130944f4d90601b3c956e119d11648e6",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/华谊影视.py"
+    },
+    {
+      "path": "py/红果短剧.py",
+      "bytes": 243366,
+      "sha256": "6e16e47778780defa2751b01ce44145cb2f586effcab1e08fc70c91459f65087",
+      "local_fix": false,
+      "source_sha256": "6e16e47778780defa2751b01ce44145cb2f586effcab1e08fc70c91459f65087",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/py/红果短剧.py"
+    }
+  ],
+  "cache_location": "tvbox-sources-20261023/runtime/",
+  "published": true,
+  "missing_upstream": [
+    "js/Anime1动畫.js"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "package": "com.V2.blb5",
+  "version_name": "1.5.5",
+  "version_code": 10626,
+  "min_sdk": 21,
+  "bytes": 7183950,
+  "sha256": "86b56e3e43c7d8aa9fbe2258e4f731c6145211be241d3fab19b749d588b79d96",
+  "provenance": "Matches the repaired APK already installed on the tested TV; upstream publisher not independently authenticated.",
+  "contains_account_data": false
+}

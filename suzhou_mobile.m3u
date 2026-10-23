@@ -421,8 +421,6 @@ http://ott.mobaibox.com/PLTV/3/224/3221227005/index.m3u8
 http://ott.mobaibox.com/PLTV/3/224/3221227654/index.m3u8
 #EXTINF:-1 group-title="各大卫视" tvg-name="新疆兵团卫视",新疆兵团卫视
 http://ott.mobaibox.com/PLTV/3/224/3221227025/index.m3u8
-#EXTINF:-1 group-title="各大卫视" tvg-name="西藏藏语卫视",西藏藏语卫视
-http://ott.mobaibox.com/PLTV/3/224/3221228022/index.m3u8
 #EXTINF:-1 group-title="各大卫视" tvg-name="陕西农林卫视",陕西农林卫视
 http://ott.mobaibox.com/PLTV/3/224/3221227648/index.m3u8
 #EXTINF:-1 group-title="各大卫视" tvg-name="陕西农林卫视",陕西农林卫视
@@ -431,14 +429,10 @@ http://ott.mobaibox.com/PLTV/3/224/3221227015/index.m3u8
 http://ott.mobaibox.com/PLTV/3/224/3221226999/index.m3u8
 #EXTINF:-1 group-title="各大卫视" tvg-name="青海安多卫视",青海安多卫视
 http://ott.mobaibox.com/PLTV/3/224/3221227651/index.m3u8
-#EXTINF:-1 group-title="特色影音" tvg-name="SiTV欢笑剧场",SiTV欢笑剧场
-http://ott.mobaibox.com/PLTV/3/224/3221227715/index.m3u8
 #EXTINF:-1 group-title="特色影音" tvg-name="凤凰中文",凤凰中文
 http://ott.mobaibox.com/PLTV/3/224/3221228527/index.m3u8
 #EXTINF:-1 group-title="特色影音" tvg-name="凤凰资讯",凤凰资讯
 http://ott.mobaibox.com/PLTV/3/224/3221228524/index.m3u8
-#EXTINF:-1 group-title="特色影音" tvg-name="SiTV都市剧场",SiTV都市剧场
-http://ott.mobaibox.com/PLTV/3/224/3221227710/index.m3u8
 #EXTINF:-1 group-title="特色影音" tvg-name="NewTV海外剧场",NewTV海外剧场
 http://ott.mobaibox.com/PLTV/3/224/3221227539/index.m3u8
 #EXTINF:-1 group-title="特色影音" tvg-name="NewTV军旅剧场",NewTV军旅剧场

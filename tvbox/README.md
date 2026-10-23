@@ -1,29 +1,39 @@
 # TVBox 本地配置
 
-这是 2026-10-23 调试使用的配置快照，适配本次安装的俊版 TVBox `com.github.tvbox.osc.jun`（20260924-2341）。
+2026-10-23 调试快照，适配俊版 TVBox `com.github.tvbox.osc.jun`（20260924-2341）。
 
 | 文件 | 用途 |
 | --- | --- |
-| `config-family.json` | 家庭点播，153 个站点，来源 qist/tvbox 的 jsm.json |
-| `config-backup.json` | 备用点播，49 个站点，来源 qist/tvbox 的 fty.json |
-| `live-local.json` | 独立直播配置，引用电视自身的本地频道 TXT |
-| `../suzhou_mobile.txt` / `.m3u` | 用户本地苏州移动源：115 个去重频道、5 个分组 |
-| `upstream.json` | 上游版本、插件下载地址和 MD5 |
+| `config-simple.json` | 默认精简入口：网易公版、新片预告、本地视频，共 3 项 |
+| `config-family.json` | 家庭点播，153 个站点 |
+| `config-backup.json` | 备用点播，49 个站点 |
+| `live-local.json` | 独立直播配置，引用电视本地频道 TXT |
+| `../suzhou_mobile.txt` / `.m3u` | 112 个频道；原 115 个中有 3 个经电脑和电视确认 HTTP 404 后移除 |
+| `upstream.json` | 固定上游提交、插件路径及 MD5/SHA256 |
+| `runtime-cache-manifest.json` | 41 份规则与依赖的原始及修复后 SHA256 |
+| `channel-health.json` | 本次频道检查统计，未包含设备地址 |
 
-两套点播配置均保留本地直播入口。直播源可能受地区、运营商和网络状态限制；频道识别成功不表示逐台可播。社区站点只验证过列表加载，一个抽测影片播放报错，未保证全部可用。此快照不自动更新。
+精简配置中的网易公版影像已实际播放出画面；另两项未逐项验证。家庭和备用配置保留可供尝试，但列表加载不代表可以播放。直播抽测一路出画面，其余仅核对 HLS 清单；地区、运营商和上游状态均会影响可用性。
 
-## 1. 准备插件
+## 1. 构建本地文件包
 
-仓库不新增分发第三方 JAR 二进制。两份配置引用电视本地的 `qist-spider.jar`、`qist-fan.jar`，需下载对应版本；地址固定到上游提交，避免分支变动引起校验不一致。
-
-在项目根目录执行：
+需要 Python 3.9 或更高版本。在项目根目录执行：
 
 ```bash
-curl -fL --connect-timeout 5 --max-time 120 'https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/jar/spider.jar' -o tvbox/qist-spider.jar
-curl -fL --connect-timeout 5 --max-time 120 'https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/jar/fan.txt' -o tvbox/qist-fan.jar
+python3 tools/prepare_tvbox.py --output tvbox/build
 ```
 
-核对 MD5：`qist-spider.jar` 为 `f302b3d8b3b84ad823a720966d9a1dfc`；`qist-fan.jar` 为 `654fb7dcb0aeaaea7dba0e662395f38e`。macOS 可用 `md5 tvbox/*.jar`，Linux 可用 `md5sum tvbox/*.jar`。两者实际均为 ZIP/JAR 格式，下载错误页不可用。
+输出目录必须不存在或为空，工具不会覆盖已有文件。工具下载固定提交的规则及两份插件，逐份校验 SHA256，修复网易公版影像的视频 ID 提取，再生成三套配置。网络下载失败或校验不符即停止，不输出半成品。
+
+规则及核心依赖改用电视自身的 HTTP 文件服务，避免本次遇到的电视访问 GitHub TLS 失败。媒体及部分站点配置仍需网络；这不是离线媒体库。上游缺失的 `js/Anime1动畫.js` 未被伪造或标记为可用。
+
+如已有完整本地文件包，可离线重建并校验：
+
+```bash
+python3 tools/prepare_tvbox.py --cache /path/to/existing-bundle --output /path/to/new-bundle
+```
+
+缓存目录应包含 `runtime/` 和两份 JAR。完整离线构建及自动测试已通过；不同网络环境下的下载成功率未保证。
 
 ## 2. 复制到电视
 
@@ -32,10 +42,10 @@ curl -fL --connect-timeout 5 --max-time 120 'https://raw.githubusercontent.com/q
 ```bash
 adb connect <电视IP>:5555
 adb -s <电视IP>:5555 shell mkdir -p /sdcard/Download/ChiGuoTVBox_20261023
-adb -s <电视IP>:5555 push tvbox/config-family.json tvbox/config-backup.json tvbox/live-local.json tvbox/qist-spider.jar tvbox/qist-fan.jar suzhou_mobile.txt /sdcard/Download/ChiGuoTVBox_20261023/
+adb -s <电视IP>:5555 push tvbox/build/. /sdcard/Download/ChiGuoTVBox_20261023/
 ```
 
-也可用 LocalSend 或 U 盘复制到同一目录。ADB 只用于安装/复制/调试，播放时不需常驻连接。
+也可用 LocalSend 或 U 盘复制，保持文件夹层级及目标目录不变。ADB 只用于复制、安装和调试，播放不需要电脑常驻。
 
 ## 3. 填写并保存
 
@@ -44,7 +54,7 @@ adb -s <电视IP>:5555 push tvbox/config-family.json tvbox/config-backup.json tv
 点播：
 
 ```text
-clan://localhost/Download/ChiGuoTVBox_20261023/config-family.json
+clan://localhost/Download/ChiGuoTVBox_20261023/config-simple.json
 ```
 
 直播：
@@ -53,20 +63,20 @@ clan://localhost/Download/ChiGuoTVBox_20261023/config-family.json
 clan://localhost/Download/ChiGuoTVBox_20261023/live-local.json
 ```
 
-按电视上的 **确定**。等首页完成加载后再操作，首次初始化可能需要几十秒。将“下次进入”设为“点播”。
+在电视按 **确定**，等首页完成加载后再操作，将“下次进入”设为“点播”。
 
-备用配置导入：将点播改为 `clan://localhost/Download/ChiGuoTVBox_20261023/config-backup.json` 并保存，随后切回家庭配置。两者会出现在 **设置 → 配置历史** 中；注意保持直播字段指向独立的 `live-local.json`。
+要保留家庭及备用入口，分别将点播改为同目录 `config-family.json`、`config-backup.json` 并保存一次，随后切回 `config-simple.json`。三者会出现在 **设置 → 配置历史** 中；直播字段保持独立的 `live-local.json`。
 
 也可在配置弹窗打开时，从电脑执行：
 
 ```bash
-./tv_helper.sh <电视IP> push-tvbox 'clan://localhost/Download/ChiGuoTVBox_20261023/config-family.json'
+./tv_helper.sh <电视IP> push-tvbox 'clan://localhost/Download/ChiGuoTVBox_20261023/config-simple.json'
 ```
 
-该命令使用 TVBox 的 9978 HTTP 服务，无需开启 ADB；但 TVBox 必须运行。返回 `ok` 只代表填写请求被接受，需在电视核对两个地址并按 **确定**。如需网页单独填写直播，使用 `http://<电视IP>:9978/` 的直播配置入口（`do=liveApi`）。
+此命令使用 TVBox 9978 服务，无需 ADB，但 TVBox 必须运行。返回成功仅代表填写请求被接受，仍需核对两个地址并按 **确定**。点播接口为 `do=api`，单独填写直播为 `do=liveApi`。
 
-## 版本与来源
+## 来源与边界
 
-点播快照来自 [qist/tvbox](https://github.com/qist/tvbox)，本项目仅将相对资源地址展开、替换插件为本地路径、替换直播为已有本地源。发布时将 qist 原始资源地址固定到已核对的上游提交。JSON 与 JAR 解析脚本仍依赖各自站点服务，整个点播功能并非离线媒体库。
+上游：[qist/tvbox](https://github.com/qist/tvbox)，固定提交见清单。本项目公开配置、版本清单及构建工具，不新增分发第三方 JAR 或整套规则缓存。下载和使用受各资源上游条款约束，本项目 MIT 许可不改变第三方许可。哈希用于完整性核对，不代表第三方代码安全审计。
 
-本地调试目录 `tvbox-sources-20261023/` 仍保留电视当时使用的完整文件，不纳入 Git。此目录的插件下载与使用由各自上游条款约束，本项目的 MIT 许可不改变第三方资源许可。
+测试：`python3 -m unittest discover -s tests -p 'test_prepare_tvbox.py'`；脚本兼容性检查：`bash tests/smoke.sh`。

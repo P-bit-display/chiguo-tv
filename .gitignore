@@ -11,3 +11,6 @@ __pycache__/
 /generate_suzhou_iptv.py
 
 /tvbox/*.jar
+
+# Generated, verified TVBox bundle (third-party assets)
+/tvbox/build/
