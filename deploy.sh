@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# 赤果 (ChiGuo · RedApple TV) -> Redmi/Xiaomi TV Auto-Deployment Script (v4.0)
-# Hardened via 20-Round Binary, Network & Runtime Adversarial Audit
+# 赤果 (ChiGuo · RedApple TV) -> Redmi/Xiaomi TV Auto-Deployment Script (v5.0)
+# Hardened via 30-Round Live-Device Telemetry, Port 6095 Auto-Guide & Binary Audit
 # ==============================================================================
 
 set -e
@@ -27,15 +27,41 @@ echo "    🍎 赤果 (ChiGuo) · 红米/小米电视极简系统一键部署工
 echo "=========================================================="
 echo ""
 
-# 1. Device IP & Mode Selection
+# 1. Device IP (Supports 'auto' LAN discovery) & Mode Selection
 TV_IP="${1:-192.0.2.10}"
 MODE="${2:---apple-tv}" # --apple-tv (全能双模) | --pure-tv (长辈纯看电视) | --lite (8G小内存精简模式)
-TARGET="$TV_IP:5555"
 
-# Bind all ADB commands strictly to the target TV socket (-s) to prevent multi-device collision
+if [ "$TV_IP" == "auto" ]; then
+    echo "[*] 正在自动扫描局域网内处于开机状态的小米/红米电视..."
+    DETECTED_IP="$(python3 -c '
+import socket, concurrent.futures
+def p(i):
+    ip = f"192.0.2.{i}"
+    for port in (5555, 6095):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.2)
+        if s.connect_ex((ip, port)) == 0:
+            s.close()
+            return ip
+        s.close()
+    return None
+with concurrent.futures.ThreadPoolExecutor(max_workers=64) as ex:
+    res = [r for r in ex.map(p, range(2, 254)) if r]
+print(res[0] if res else "")
+')"
+    if [ -z "$DETECTED_IP" ]; then
+        echo "[!] 未在局域网内发现开机状态的小米/红米电视，请确认电视已开机联网。"
+        exit 1
+    fi
+    TV_IP="$DETECTED_IP"
+fi
+
+TARGET="$TV_IP:5555"
 ADB=("$ADB_BIN" -s "$TARGET")
 
-echo "[*] 目标电视套接字: $TARGET"
+# Query TV name via Port 6095 if available
+TV_FRIENDLY_NAME="$(curl -s -m 1 "http://$TV_IP:6095/controller?action=getsysteminfo" | sed -n 's/.*"devicename":"\([^"]*\)".*/\1/p' || true)"
+echo "[*] 目标电视: $TV_IP ${TV_FRIENDLY_NAME:+($TV_FRIENDLY_NAME)}"
 case "$MODE" in
     --pure-tv)
         echo "[*] 部署模式: 【纯看电视·长辈锁死模式】(开机直达直播 + 防误触保护)"
@@ -47,32 +73,44 @@ case "$MODE" in
         echo "[*] 部署模式: 【全能双模·Apple TV极简模式】(开机看电视 + Home键切Apple桌面 + 12款全球生态)"
         ;;
 esac
-echo "[*] 正在连接电视 ADB (端口 5555)..."
+echo "[*] 正在连接电视 ADB ($TARGET)..."
 
 CONNECT_OUTPUT="$($ADB_BIN connect "$TARGET" 2>&1 || true)"
 echo "    -> $CONNECT_OUTPUT"
 
-# Check if authorized
-MAX_WAIT=25
+# Round 30 Auto-Guide: If ADB 5555 is closed (Connection refused) but Port 6095 is open,
+# automatically pop open Xiaomi Settings app on TV screen to guide user!
+SETTINGS_POPPED=0
+MAX_WAIT=35
 WAIT_COUNT=0
 while true; do
     DEVICE_STATE="$($ADB_BIN devices | awk -v t="$TARGET" '$1 == t {print $2}' || true)"
     if [ "$DEVICE_STATE" == "device" ]; then
         echo "[✓] 电视连接成功且已授权！"
-        # 唤醒电视屏幕 (KEYCODE_WAKEUP)
         "${ADB[@]}" shell input keyevent 224 >/dev/null 2>&1 || true
         break
     elif [ "$DEVICE_STATE" == "unauthorized" ]; then
-        echo "[!] 请注意电视屏幕：已弹出【允许USB/网络调试吗？】窗口，请用遥控器勾选【总是允许】并按【确定】！"
+        echo "[!] 请看电视屏幕：已弹出【允许USB/网络调试吗？】窗口，请用遥控器勾选【总是允许】并按【确定】！"
         sleep 2
     else
-        echo "[-] 等待电视 ADB 服务就绪... ($WAIT_COUNT/$MAX_WAIT)"
+        if [ $SETTINGS_POPPED -eq 0 ]; then
+            if curl -s -m 1 "http://$TV_IP:6095/controller?action=startapp&type=packagename&packagename=com.xiaomi.mitv.settings" >/dev/null 2>&1; then
+                echo ""
+                echo "💡 [智能引导] 检测到电视尚未开启 ADB 调试，已自动为您在电视屏幕上弹出【系统设置】！"
+                echo "   请拿起遥控器按以下 2 步开启（开启后脚本将自动继续，无需重新运行）："
+                echo "   1. 进入【关于本机】-> 光标停在【产品型号】上连续按 7 次【确定键】提示进入开发者模式；"
+                echo "   2. 返回上一级进入【账号与安全】-> 将【ADB 调试】切换为【允许】。"
+                echo ""
+                SETTINGS_POPPED=1
+            fi
+        fi
+        echo "[-] 等待电视开启 ADB 调试端口 (5555)... ($WAIT_COUNT/$MAX_WAIT)"
         $ADB_BIN connect "$TARGET" >/dev/null 2>&1 || true
-        sleep 2
+        sleep 3
     fi
     WAIT_COUNT=$((WAIT_COUNT + 1))
     if [ $WAIT_COUNT -ge $MAX_WAIT ]; then
-        echo "[!] 连接超时。请确认电视已开机、与电脑处于同一局域网，且已开启【账号与安全 -> ADB调试】。"
+        echo "[!] 等待超时。在电视上开启【账号与安全 -> ADB调试】后，再次运行 ./deploy.sh $TV_IP 即可。"
         exit 1
     fi
 done
@@ -90,42 +128,50 @@ get_free_data_mb() {
 
 BEFORE_FREE_MB="$(get_free_data_mb)"
 
-# 2. System Fingerprint, Hardware Audit & Backup
+# 2. System Fingerprint, Hardware Audit & Per-Device Isolated Backup (Round 24)
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 echo ""
-echo "[*] 步骤 1/5: 采集电视硬件指纹并备份原厂状态..."
-"${ADB[@]}" shell getprop > "$BACKUP_DIR/getprop_$TIMESTAMP.txt"
-"${ADB[@]}" shell pm list packages -f > "$BACKUP_DIR/packages_$TIMESTAMP.txt"
-MODEL="$("${ADB[@]}" shell getprop ro.product.model | tr -d '\r')"
+echo "[*] 步骤 1/5: 采集电视硬件指纹并建立专属备份档案..."
+MODEL="$("${ADB[@]}" shell getprop ro.product.model | tr -d '\r ' || echo "MiTV")"
 BUILD="$("${ADB[@]}" shell getprop ro.build.version.release | tr -d '\r')"
 SDK_VER="$("${ADB[@]}" shell getprop ro.build.version.sdk | tr -d '\r')"
 CPU_ABI="$("${ADB[@]}" shell getprop ro.product.cpu.abilist | tr -d '\r')"
+BACKUP_PREFIX="$BACKUP_DIR/${TV_IP}_${MODEL}_$TIMESTAMP"
+
+"${ADB[@]}" shell getprop > "${BACKUP_PREFIX}_getprop.txt"
+"${ADB[@]}" shell pm list packages -f > "${BACKUP_PREFIX}_packages.txt"
 echo "    设备型号: $MODEL (Android $BUILD / API $SDK_VER | 架构: $CPU_ABI)"
 echo "    初始可用闪存 (/data): 约 ${BEFORE_FREE_MB} MB"
-echo "    系统备份已保存至: $BACKUP_DIR/packages_$TIMESTAMP.txt"
+echo "    专属备份档案: ${BACKUP_PREFIX}_packages.txt"
 
-# 3. Pre-Install Debloat & Storage Reclamation (Moved BEFORE APK install to free 300-600MB!)
+# 3. Pre-Install Debloat & Storage Reclamation (Includes Round 21 Live-Device Bloatware!)
 echo ""
-echo "[*] 步骤 2/5: 停用底层广告与更新服务并释放电视闪存空间..."
+echo "[*] 步骤 2/5: 停用底层广告、时尚画报与更新服务并释放闪存空间..."
 
 echo "    [*] 正在清空本地广告视频预缓存、OTA残留包与系统冗余缓存..."
 "${ADB[@]}" shell pm clear com.miui.systemAdSolution >/dev/null 2>&1 || true
 "${ADB[@]}" shell pm clear com.xiaomi.mitv.advertise >/dev/null 2>&1 || true
+"${ADB[@]}" shell pm clear com.xiaomi.tv.gallery >/dev/null 2>&1 || true
+"${ADB[@]}" shell pm clear com.duokan.videodaily >/dev/null 2>&1 || true
 "${ADB[@]}" shell rm -rf /sdcard/Android/data/com.xiaomi.mitv.advertise/files/* >/dev/null 2>&1 || true
 "${ADB[@]}" shell rm -rf /sdcard/Android/data/com.miui.systemAdSolution/cache/* >/dev/null 2>&1 || true
 "${ADB[@]}" shell rm -rf /sdcard/downloaded_rom/* /sdcard/Download/ota/* >/dev/null 2>&1 || true
 "${ADB[@]}" shell pm trim-caches 999999999999999999 >/dev/null 2>&1 || true
 
-# Note: com.xiaomi.voicecontrol is intentionally preserved so remote voice button still controls volume/weather
+# Note: com.xiaomi.voicecontrol (小爱同学), com.xiaomi.mitv.smartshare (无线投屏)
+# and com.xiaomi.mitv.settings (设置) are strictly preserved!
 DEBLOAT_LIST=(
     "com.miui.systemAdSolution"
     "com.xiaomi.mitv.advertise"
+    "com.xiaomi.tv.gallery"
+    "com.duokan.videodaily"
+    "com.duokan.videodownload"
+    "com.xiaomi.mitv.handbook"
     "com.xiaomi.statistic"
     "com.xiaomi.analytics"
     "com.xiaomi.mitv.shop"
     "com.xiaomi.mitv.payment"
     "com.xiaomi.gamecenter.pad"
-    "com.duokan.videodownload"
     "com.xiaomi.mitv.upgrade"
     "com.android.updater"
     "com.xiaomi.mitv.ota"
@@ -136,19 +182,24 @@ for pkg in "${DEBLOAT_LIST[@]}"; do
     echo "    [✓] 已安全停用: $pkg"
 done
 
-# Bypass Xiaomi MIUI TV ADB installation confirmation prompts, disable auto-updates & persist TCP ADB
-echo "    [*] 解除 MIUI TV 安装弹窗拦截、固化无线 ADB 端口并关闭静默更新..."
+# Explicitly safeguard wireless casting (AirPlay/DLNA) and Settings
+"${ADB[@]}" shell pm enable com.xiaomi.mitv.smartshare >/dev/null 2>&1 || true
+"${ADB[@]}" shell pm enable com.xiaomi.mitv.settings >/dev/null 2>&1 || true
+
+# Bypass Xiaomi MIUI TV ADB installation prompts, set Aliyun NTP & persist TCP ADB
+echo "    [*] 解除 MIUI TV 安装弹窗拦截、校准阿里云 NTP 授时并固化无线 ADB..."
 "${ADB[@]}" shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1 || true
 "${ADB[@]}" shell settings put global package_verifier_enable 0 >/dev/null 2>&1 || true
 "${ADB[@]}" shell settings put secure install_non_market_apps 1 >/dev/null 2>&1 || true
 "${ADB[@]}" shell settings put global auto_update 0 >/dev/null 2>&1 || true
+"${ADB[@]}" shell settings put global ntp_server ntp.aliyun.com >/dev/null 2>&1 || true
 "${ADB[@]}" shell settings put global adb_enabled 1 >/dev/null 2>&1 || true
 "${ADB[@]}" shell setprop persist.adb.tcp.port 5555 >/dev/null 2>&1 || true
 
 FREE_MB="$(get_free_data_mb)"
 echo "    [i] 清理后 /data 分区可用空间: 约 ${FREE_MB} MB"
 
-# 4. Tiered APK Installation with Storage Watermark, SDK Check & Auto-Permission Grant (-g)
+# 4. Tiered APK Installation with Storage Watermark, Auto-Reconnect & Auto-Permission Grant (-g)
 echo ""
 echo "[*] 步骤 3/5: 分梯队静默推送并安装应用生态 (自动授予运行时权限)..."
 
@@ -161,6 +212,9 @@ install_apk() {
         echo "    [-] 跳过未下载应用: $file"
         return 0
     fi
+
+    # Ensure ADB socket is alive before each transfer (Round 27 Wi-Fi jitter resilience)
+    $ADB_BIN connect "$TARGET" >/dev/null 2>&1 || true
 
     # Check Android SDK version compatibility
     if [[ "$SDK_VER" =~ ^[0-9]+$ ]] && [ "$SDK_VER" -lt "$min_sdk" ]; then
@@ -179,8 +233,6 @@ install_apk() {
     fi
 
     echo "    正在安装 $name ($file)..."
-    # Use -g to auto-grant all runtime permissions (storage/notifications) so elderly users see 0 popups!
-    # Fallback to without -g if Android 5.1 (API < 23) does not support -g flag.
     local RES
     if [[ "$SDK_VER" =~ ^[0-9]+$ ]] && [ "$SDK_VER" -ge 23 ]; then
         RES="$("${ADB[@]}" install -r -d -g "$APK_DIR/$file" 2>&1 || true)"
@@ -189,7 +241,7 @@ install_apk() {
     fi
 
     if echo "$RES" | grep -q "Success"; then
-        echo "    [✓] $name 安装成功 (已自动免除首次运行权限弹窗)！"
+        echo "    [✓] $name 安装成功 (已免除首次运行权限弹窗)！"
     else
         echo "    [!] $name 安装返回: $RES"
     fi
@@ -258,7 +310,7 @@ if "${ADB[@]}" shell pm path "$AERIAL_PKG" >/dev/null 2>&1; then
     "${ADB[@]}" shell settings put secure screensaver_components "$AERIAL_DREAM" >/dev/null 2>&1 || true
     "${ADB[@]}" shell settings put secure screensaver_enabled 1 >/dev/null 2>&1 || true
     "${ADB[@]}" shell settings put secure screensaver_activate_on_sleep 1 >/dev/null 2>&1 || true
-    echo "    [✓] 已激活 Apple TV 4K 航拍屏保 (AerialViews DreamService)"
+    echo "    [✓] 已激活 Apple TV 4K 航拍屏保 (已停用小米时尚画报，由 AerialViews 独占待机)"
 fi
 
 # 6. Hard Safety Gate & Default Launcher Switchover

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# 赤果 (ChiGuo · RedApple TV) -> 1-Click Factory Rollback Script (v4.0)
+# 赤果 (ChiGuo · RedApple TV) -> 1-Click Factory Rollback Script (v5.0)
 # Full state restoration including Accessibility, Screensaver & Verified Pkgs
 # ==============================================================================
 
@@ -23,7 +23,7 @@ echo "[*] 正在连接电视: $TARGET ..."
 $ADB_BIN connect "$TARGET"
 
 echo "[*] 1/4: 正在解除第三方无障碍按键劫持与恢复原厂屏保..."
-# CRITICAL FIX: Clear Projectivy Accessibility Service so it stops hijacking HOME key!
+# Clear Projectivy Accessibility Service so it stops hijacking HOME key!
 "${ADB[@]}" shell settings put secure enabled_accessibility_services "" >/dev/null 2>&1 || true
 "${ADB[@]}" shell settings put secure accessibility_enabled 0 >/dev/null 2>&1 || true
 "${ADB[@]}" shell settings delete secure screensaver_components >/dev/null 2>&1 || true
@@ -36,12 +36,15 @@ echo "[*] 3/4: 正在恢复原厂系统组件..."
 PACKAGES=(
     "com.miui.systemAdSolution"
     "com.xiaomi.mitv.advertise"
+    "com.xiaomi.tv.gallery"
+    "com.duokan.videodaily"
+    "com.duokan.videodownload"
+    "com.xiaomi.mitv.handbook"
     "com.xiaomi.statistic"
     "com.xiaomi.analytics"
     "com.xiaomi.mitv.shop"
     "com.xiaomi.mitv.payment"
     "com.xiaomi.gamecenter.pad"
-    "com.duokan.videodownload"
     "com.xiaomi.mitv.upgrade"
     "com.android.updater"
     "com.xiaomi.mitv.ota"
