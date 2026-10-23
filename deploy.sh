@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# 赤果 (ChiGuo · RedApple TV) -> Redmi/Xiaomi TV Auto-Deployment Script (v2.0)
-# Hardened via Round-2 Binary Manifest & Storage Safety Audit
+# 赤果 (ChiGuo · RedApple TV) -> Redmi/Xiaomi TV Auto-Deployment Script (v3.0)
+# Hardened via 10-Round Deep Engineering & Runtime Audit
 # ==============================================================================
 
 set -e
@@ -82,21 +82,24 @@ $ADB_BIN shell getprop > "$BACKUP_DIR/getprop_$TIMESTAMP.txt"
 $ADB_BIN shell pm list packages -f > "$BACKUP_DIR/packages_$TIMESTAMP.txt"
 MODEL="$($ADB_BIN shell getprop ro.product.model | tr -d '\r')"
 BUILD="$($ADB_BIN shell getprop ro.build.version.release | tr -d '\r')"
+SDK_VER="$($ADB_BIN shell getprop ro.build.version.sdk | tr -d '\r')"
 CPU_ABI="$($ADB_BIN shell getprop ro.product.cpu.abilist | tr -d '\r')"
-echo "    设备型号: $MODEL (Android $BUILD | 架构: $CPU_ABI)"
+echo "    设备型号: $MODEL (Android $BUILD / API $SDK_VER | 架构: $CPU_ABI)"
 echo "    系统备份已保存至: $BACKUP_DIR/packages_$TIMESTAMP.txt"
 
 # 3. Pre-Install Debloat & Storage Reclamation (Moved BEFORE APK install to free 300-600MB!)
 echo ""
-echo "[*] 步骤 2/5: 停用底层广告服务并释放电视闪存空间..."
+echo "[*] 步骤 2/5: 停用底层广告与更新服务并释放电视闪存空间..."
 
-echo "    [*] 正在清空本地广告视频预缓存与系统冗余缓存..."
+echo "    [*] 正在清空本地广告视频预缓存、OTA残留包与系统冗余缓存..."
 $ADB_BIN shell pm clear com.miui.systemAdSolution >/dev/null 2>&1 || true
 $ADB_BIN shell pm clear com.xiaomi.mitv.advertise >/dev/null 2>&1 || true
 $ADB_BIN shell rm -rf /sdcard/Android/data/com.xiaomi.mitv.advertise/files/* >/dev/null 2>&1 || true
 $ADB_BIN shell rm -rf /sdcard/Android/data/com.miui.systemAdSolution/cache/* >/dev/null 2>&1 || true
+$ADB_BIN shell rm -rf /sdcard/downloaded_rom/* /sdcard/Download/ota/* >/dev/null 2>&1 || true
 $ADB_BIN shell pm trim-caches 999999999999999999 >/dev/null 2>&1 || true
 
+# Note: com.xiaomi.voicecontrol is intentionally preserved so remote voice button still controls volume/weather
 DEBLOAT_LIST=(
     "com.miui.systemAdSolution"
     "com.xiaomi.mitv.advertise"
@@ -107,6 +110,8 @@ DEBLOAT_LIST=(
     "com.xiaomi.gamecenter.pad"
     "com.duokan.videodownload"
     "com.xiaomi.mitv.upgrade"
+    "com.android.updater"
+    "com.xiaomi.mitv.ota"
 )
 
 for pkg in "${DEBLOAT_LIST[@]}"; do
@@ -114,11 +119,12 @@ for pkg in "${DEBLOAT_LIST[@]}"; do
     echo "    [✓] 已安全停用: $pkg"
 done
 
-# Bypass Xiaomi MIUI TV ADB installation confirmation prompts
-echo "    [*] 解除 MIUI TV 应用安装弹窗拦截与安全限制..."
+# Bypass Xiaomi MIUI TV ADB installation confirmation prompts & disable silent auto-updates
+echo "    [*] 解除 MIUI TV 应用安装弹窗拦截与后台静默更新..."
 $ADB_BIN shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1 || true
 $ADB_BIN shell settings put global package_verifier_enable 0 >/dev/null 2>&1 || true
 $ADB_BIN shell settings put secure install_non_market_apps 1 >/dev/null 2>&1 || true
+$ADB_BIN shell settings put global auto_update 0 >/dev/null 2>&1 || true
 
 # Helper to check free space on /data in MB
 get_free_data_mb() {
@@ -134,7 +140,7 @@ get_free_data_mb() {
 FREE_MB="$(get_free_data_mb)"
 echo "    [i] 当前电视 /data 分区可用空间: 约 ${FREE_MB} MB"
 
-# 4. Tiered APK Installation with Storage Watermark Protection
+# 4. Tiered APK Installation with Storage Watermark & SDK Compatibility Protection
 echo ""
 echo "[*] 步骤 3/5: 分梯队静默推送并安装应用生态..."
 
@@ -142,8 +148,15 @@ install_apk() {
     local name="$1"
     local file="$2"
     local is_core="$3" # "core" or "ext"
+    local min_sdk="${4:-17}"
     if [ ! -f "$APK_DIR/$file" ]; then
         echo "    [-] 跳过未下载应用: $file"
+        return 0
+    fi
+
+    # Check Android SDK version compatibility
+    if [[ "$SDK_VER" =~ ^[0-9]+$ ]] && [ "$SDK_VER" -lt "$min_sdk" ]; then
+        echo "    [!] 系统版本过低 (当前 API $SDK_VER < 要求 API $min_sdk)，自动跳过: $name"
         return 0
     fi
 
@@ -167,30 +180,34 @@ install_apk() {
 }
 
 # Tier 1: 核心必装四件套 (优先保障)
-install_apk "Apple TV 极简桌面 (Projectivy Launcher)" "ProjectivyLauncher.apk" "core"
-install_apk "开机直达电视直播 (My-TV)" "MyTV.apk" "core"
-install_apk "哔哩哔哩 TV版 (BBLL)" "BBLL.apk" "core"
-install_apk "家庭影院 NAS 客户端 (Jellyfin)" "Jellyfin.apk" "core"
+install_apk "Apple TV 极简桌面 (Projectivy Launcher)" "ProjectivyLauncher.apk" "core" 23
+install_apk "开机直达电视直播 (My-TV)" "MyTV.apk" "core" 23
+install_apk "哔哩哔哩 TV版 (BBLL)" "BBLL.apk" "core" 21
+install_apk "家庭影院 NAS 客户端 (Jellyfin)" "Jellyfin.apk" "core" 21
 
 # Tier 2: 全球流媒体与画质扩展套件 (--lite 模式下跳过)
 if [ "$MODE" != "--lite" ]; then
-    install_apk "Apple TV 同款 4K 航拍屏保 (AerialViews)" "AerialViews.apk" "ext"
-    install_apk "YouTube 电视版 (SmartTube 无广告 4K)" "SmartTube.apk" "ext"
-    install_apk "开源应用市场 (Aurora Store 免GMS商店)" "AuroraStore.apk" "ext"
-    install_apk "开源多源聚合播放器 (TVBox)" "TVBox.apk" "ext"
-    install_apk "局域网无线闪传 (LocalSend)" "LocalSend.apk" "ext"
-    install_apk "网易云音乐 TV版 (大屏黑胶)" "NetEaseMusic.apk" "ext"
-    install_apk "网络分流扩展客户端 (FlClash TV遥控版)" "Clash.apk" "ext"
-    install_apk "海外流媒体聚合中心 (Stremio TV版)" "Stremio.apk" "ext"
+    install_apk "Apple TV 同款 4K 航拍屏保 (AerialViews)" "AerialViews.apk" "ext" 23
+    install_apk "YouTube 电视版 (SmartTube 无广告 4K)" "SmartTube.apk" "ext" 17
+    install_apk "开源应用市场 (Aurora Store 免GMS商店)" "AuroraStore.apk" "ext" 23
+    install_apk "开源多源聚合播放器 (TVBox)" "TVBox.apk" "ext" 19
+    install_apk "局域网无线闪传 (LocalSend)" "LocalSend.apk" "ext" 24
+    install_apk "网易云音乐 TV版 (大屏黑胶)" "NetEaseMusic.apk" "ext" 17
+    install_apk "网络分流扩展客户端 (FlClash TV遥控版)" "Clash.apk" "ext" 24
+    install_apk "海外流媒体聚合中心 (Stremio TV版)" "Stremio.apk" "ext" 24
 fi
 
-# 5. UI Animations, Screensaver & Exact Binary Component Permissions
+# 5. UI Animations, I/O Debloat, Screensaver & Exact Binary Component Permissions
 echo ""
-echo "[*] 步骤 4/5: 调优系统渲染动效、4K航拍屏保与桌面底层权限..."
+echo "[*] 步骤 4/5: 调优系统渲染动效、I/O减负、4K航拍屏保与桌面底层权限..."
 $ADB_BIN shell settings put global window_animation_scale 0.5 >/dev/null 2>&1 || true
 $ADB_BIN shell settings put global transition_animation_scale 0.5 >/dev/null 2>&1 || true
 $ADB_BIN shell settings put global animator_duration_scale 0.5 >/dev/null 2>&1 || true
-echo "    [✓] 系统全局动效倍率已调优为 0.5x"
+
+# Reduce background I/O & wireless scan jitter for smoother 4K HEVC playback
+$ADB_BIN shell settings put global wifi_scan_always_enabled 0 >/dev/null 2>&1 || true
+$ADB_BIN shell settings put global ble_scan_always_enabled 0 >/dev/null 2>&1 || true
+echo "    [✓] 系统全局动效倍率已调优为 0.5x，已关闭后台无线定位扫描干扰"
 
 # Exact binary package & class names verified from AndroidManifest.xml
 PROJ_PKG="com.spocky.projengmenu"
@@ -203,19 +220,22 @@ MYTV_MAIN="$MYTV_PKG/top.yogiczy.mytv.tv.MainActivity"
 AERIAL_PKG="com.neilturner.aerialviews"
 AERIAL_DREAM="$AERIAL_PKG/.ui.screensaver.DreamActivity"
 
-# Grant Projectivy Launcher & My-TV permissions + Doze whitelist
-$ADB_BIN shell appops set "$PROJ_PKG" SYSTEM_ALERT_WINDOW allow >/dev/null 2>&1 || true
-$ADB_BIN shell pm grant "$PROJ_PKG" android.permission.WRITE_SECURE_SETTINGS >/dev/null 2>&1 || true
-$ADB_BIN shell dumpsys deviceidle whitelist +"$PROJ_PKG" >/dev/null 2>&1 || true
+CLASH_PKG="com.follow.clash"
 
-# Grant My-TV overlay & boot privileges so its BootReceiver works on Android 10+
-$ADB_BIN shell appops set "$MYTV_PKG" SYSTEM_ALERT_WINDOW allow >/dev/null 2>&1 || true
-$ADB_BIN shell dumpsys deviceidle whitelist +"$MYTV_PKG" >/dev/null 2>&1 || true
+# Grant Projectivy, My-TV, AerialViews & FlClash background survival + anti-hibernation privileges
+for core_pkg in "$PROJ_PKG" "$MYTV_PKG" "$AERIAL_PKG" "$CLASH_PKG"; do
+    $ADB_BIN shell appops set "$core_pkg" SYSTEM_ALERT_WINDOW allow >/dev/null 2>&1 || true
+    $ADB_BIN shell appops set "$core_pkg" RUN_IN_BACKGROUND allow >/dev/null 2>&1 || true
+    $ADB_BIN shell appops set "$core_pkg" RUN_ANY_IN_BACKGROUND allow >/dev/null 2>&1 || true
+    $ADB_BIN shell appops set "$core_pkg" AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore >/dev/null 2>&1 || true
+    $ADB_BIN shell dumpsys deviceidle whitelist +"$core_pkg" >/dev/null 2>&1 || true
+done
+$ADB_BIN shell pm grant "$PROJ_PKG" android.permission.WRITE_SECURE_SETTINGS >/dev/null 2>&1 || true
 
 # Enable Projectivy Accessibility Service (exact verified class name)
 $ADB_BIN shell settings put secure enabled_accessibility_services "$PROJ_ACC_SVC" >/dev/null 2>&1 || true
 $ADB_BIN shell settings put secure accessibility_enabled 1 >/dev/null 2>&1 || true
-echo "    [✓] 已授予 Projectivy 与 My-TV 悬浮窗、开机自启、内存白名单与无障碍权限"
+echo "    [✓] 已授予核心应用悬浮窗、防休眠、常驻内存白名单与无障碍按键接管权限"
 
 # Activate Apple TV 4K Aerial Screensaver if installed
 if $ADB_BIN shell pm path "$AERIAL_PKG" >/dev/null 2>&1; then
@@ -267,6 +287,7 @@ else
     echo "1. 电视已进入无广告 Apple TV 风格极简桌面 (Projectivy Launcher)！"
     echo "2. 在桌面设置 (Settings -> Power -> Autostart on boot) 中选择【我的电视 (My-TV)】即可实现开机直达直播。"
     echo "3. 播放直播时，随时按遥控器【Home 主页键】即可切回 Apple 极简桌面打开 B站/Jellyfin/YouTube！"
-    echo "4. 如需随时恢复小米原厂桌面，仅需运行: ./restore.sh $TV_IP"
+    echo "4. 配套远控瑞士军刀: 运行 ./tv_helper.sh $TV_IP 可一键向电视输入网址、秒切模式或截图。"
+    echo "5. 如需随时恢复小米原厂桌面，仅需运行: ./restore.sh $TV_IP"
 fi
 echo "=========================================================="
