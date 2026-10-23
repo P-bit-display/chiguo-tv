@@ -1,3 +1,5 @@
+> **2026-10-23 status update:** This translation contains historical feature descriptions. Boot-to-live-TV, persistent ADB/accessibility, and automatic screensaver playback are not verified. See the updated [English README](README.en.md) or [简体中文 README](README.md) for current behavior.
+
 # 🍎 赤果 (ChiGuo) · RedApple TV
 
 <p align="center">

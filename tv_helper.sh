@@ -6,21 +6,33 @@
 
 set -e
 
-ADB_BIN="/opt/homebrew/bin/adb"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ADB_BIN="${CHIGUO_ADB_BIN:-/opt/homebrew/bin/adb}"
 if [ ! -f "$ADB_BIN" ]; then
     ADB_BIN="$(which adb || true)"
 fi
 
-TV_IP="${1:-192.0.2.10}"
+TV_IP="${1:-}"
+if [ -z "$TV_IP" ]; then
+    echo "用法: ./tv_helper.sh <电视IP> [参数]；请显式指定自己的设备。"
+    exit 1
+fi
 CMD="${2:-status}"
 ARG="${3:-}"
 
 if [ "$TV_IP" == "scan" ] || [ "$CMD" == "scan" ]; then
-    echo "[*] 正在扫描局域网 (192.0.2.0/24) 内的全部小米/红米电视..."
+    SCAN_PREFIX="${CHIGUO_SCAN_PREFIX:-}"
+    if [ -z "$SCAN_PREFIX" ]; then
+        echo "请设置 CHIGUO_SCAN_PREFIX 为自己的网段前三段，再执行 scan。"
+        exit 1
+    fi
+    echo "[*] 正在扫描指定网段内的小米/红米电视..."
     python3 -c '
-import socket, concurrent.futures, urllib.request, re
+import socket, concurrent.futures, urllib.request, re, sys, ipaddress
+network = ipaddress.ip_network(sys.argv[1] + ".0/24", strict=True)
+prefix = str(network.network_address).rsplit(".", 1)[0]
 def probe(i):
-    ip = f"192.0.2.{i}"
+    ip = f"{prefix}.{i}"
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(0.25)
     if s.connect_ex((ip, 6095)) == 0:
@@ -47,12 +59,38 @@ else:
     for ip, name, adb_open in found:
         adb_str = "✅ ADB调试已开启(5555端口就绪)" if adb_open else "⚠️ ADB调试未开启(可运行 ./tv_helper.sh " + ip + " open-settings 自动弹出设置)"
         print(f"  📺 发现电视: {ip:15s} | 名称: {name} | 状态: {adb_str}")
-'
+' "$SCAN_PREFIX"
     exit 0
 fi
 
-# Zero-ADB commands via Port 6095 (work even before ADB 5555 is enabled!)
+# HTTP commands: Xiaomi remote on 6095; TVBox configuration on 9978.
 case "$CMD" in
+    push-tvbox)
+        if [ -z "$ARG" ]; then
+            echo "用法: ./tv_helper.sh $TV_IP push-tvbox \"https://.../api.json\""
+            exit 1
+        fi
+        case "$ARG" in
+            http://*|https://*|clan://*|file://*) ;;
+            *)
+                echo "[!] 配置地址须以 http://、https://、clan:// 或 file:// 开头。"
+                exit 1
+                exit 0
+        ;;
+        esac
+        echo "[*] 请先在电视打开 TVBox：设置 → 配置地址弹窗；推送后需按确定保存。"
+        echo "[*] 正在通过 TVBox 9978 端口提交配置导入请求..."
+        if TVBOX_RESPONSE="$(curl -fsS --connect-timeout 3 -m 10 --data-urlencode "do=api" --data-urlencode "url=$ARG" "http://$TV_IP:9978/action")"; then
+            echo "[i] HTTP 请求已提交；请在 TVBox 配置弹窗核对点播和直播地址，按确定保存，再检查站源和实际播放。"
+            if [ -n "$TVBOX_RESPONSE" ]; then
+                printf '    TVBox 响应: %s\n' "$TVBOX_RESPONSE"
+            fi
+        else
+            echo "[!] 配置请求失败，请先打开 TVBox 并进入设置页，再重试。"
+            exit 1
+        fi
+        exit 0
+        ;;
     open-settings)
         echo "[*] 正在通过小米 6095 远控协议在电视 ($TV_IP) 上直接弹出【系统设置】界面 (无需 ADB)..."
         curl -s -m 3 "http://$TV_IP:6095/controller?action=startapp&type=packagename&packagename=com.xiaomi.mitv.settings" >/dev/null
@@ -90,6 +128,40 @@ PROJ_MAIN="com.spocky.projengmenu/com.spocky.projengmenu.ui.home.MainActivity"
 MYTV_MAIN="com.github.mytv.android/top.yogiczy.mytv.tv.MainActivity"
 
 case "$CMD" in
+    repair-launcher)
+        PROJ_SERVICE="com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService"
+        if ! CURRENT_SERVICES="$("${ADB[@]}" shell settings get secure enabled_accessibility_services)"; then
+            echo "[!] 无法读取原有无障碍服务，已停止修复以保留现有配置。"
+            exit 1
+        fi
+        CURRENT_SERVICES="${CURRENT_SERVICES//$'\r'/}"
+        case "$CURRENT_SERVICES" in
+            ""|null) CURRENT_SERVICES="$PROJ_SERVICE" ;;
+            *)
+                case ":$CURRENT_SERVICES:" in
+                    *":$PROJ_SERVICE:"*) ;;
+                    *) CURRENT_SERVICES="$CURRENT_SERVICES:$PROJ_SERVICE" ;;
+                esac
+                ;;
+        esac
+        "${ADB[@]}" shell settings put secure enabled_accessibility_services "$CURRENT_SERVICES"
+        "${ADB[@]}" shell settings put secure accessibility_enabled 1
+        SERVICE_BOUND=0
+        for attempt in 1 2 3; do
+            SERVICE_STATE="$("${ADB[@]}" shell dumpsys accessibility)"
+            if printf '%s\n' "$SERVICE_STATE" | grep -Fq 'Service[label=Projectivy Launcher,'; then
+                SERVICE_BOUND=1
+                break
+            fi
+            sleep 1
+        done
+        if [ "$SERVICE_BOUND" -ne 1 ]; then
+            echo "[!] 已写入服务列表，但未确认 Projectivy 实际绑定；请检查电视端限制。"
+            exit 1
+        fi
+        echo "[✓] Projectivy 无障碍服务已绑定，已保留原有服务。"
+        echo "[i] 本命令仅修复当前状态，不能保证绕过固件在重启时的覆盖。"
+        ;;
     status)
         echo "=========================================================="
         echo "    🍎 赤果 (ChiGuo) · 电视实时运行体检 ($TARGET)"
@@ -130,7 +202,11 @@ case "$CMD" in
         echo "[✓] 投送完成！"
         ;;
     nas)
-        NAS_URL="${ARG:-http://192.0.2.20:8096}"
+        NAS_URL="$ARG"
+        if [ -z "$NAS_URL" ]; then
+            echo "用法: ./tv_helper.sh $TV_IP nas <自己的Jellyfin服务器URL>"
+            exit 1
+        fi
         echo "[*] 正在向电视一键输入群晖 Jellyfin 地址: $NAS_URL"
         "${ADB[@]}" shell input text "$NAS_URL"
         echo "[✓] 群晖地址输入完成！"
@@ -147,19 +223,6 @@ case "$CMD" in
         else
             echo "[!] 未找到本地文件: $ARG"
             exit 1
-        fi
-        ;;
-    push-tvbox)
-        if [ -z "$ARG" ]; then
-            echo "用法: ./tv_helper.sh $TV_IP push-tvbox \"https://.../api.json\""
-            exit 1
-        fi
-        echo "[*] 正在通过 TVBox 内置 9978 端口 API 免遥控器直推接口地址..."
-        if curl -s -m 5 --data-urlencode "do=push" --data-urlencode "url=$ARG" "http://$TV_IP:9978/action" >/dev/null; then
-            echo "[✓] TVBox 接口地址推送成功！(请确保电视当前已打开 TVBox 设置页)"
-        else
-            echo "[!] 9978 端口未响应 (请先在电视上打开 TVBox)，已自动回退为 ADB 键盘输入..."
-            "${ADB[@]}" shell input text "$ARG"
         fi
         ;;
     settings)
@@ -190,10 +253,12 @@ case "$CMD" in
         "${ADB[@]}" shell am start -n "com.neilturner.aerialviews/.ui.screensaver.TestActivity"
         ;;
     screenshot)
-        OUT_FILE="tv_screen_$(date +%Y%m%d_%H%M%S).png"
+        OUT_FILE="$DIR/tv_screen_$(date +%Y%m%d_%H%M%S).png"
         echo "[*] 正在截取电视高清画面..."
-        "${ADB[@]}" exec-out screencap -p > "$OUT_FILE"
-        echo "[✓] 截图已保存至当前目录: $OUT_FILE"
+        "${ADB[@]}" shell screencap -p /sdcard/tv_screencap.png
+        "${ADB[@]}" pull /sdcard/tv_screencap.png "$OUT_FILE" >/dev/null 2>&1
+        "${ADB[@]}" shell rm -f /sdcard/tv_screencap.png
+        echo "[✓] 截图已保存至: $OUT_FILE"
         ;;
     *)
         echo "用法: ./tv_helper.sh <电视IP|scan> <指令> [参数]"
@@ -205,12 +270,13 @@ case "$CMD" in
         echo "  key <按键>         - 电脑充当无线遥控器 (up/down/left/right/enter/back/home)"
         echo ""
         echo "⚡ ADB 深度控制指令 (开启 ADB 调试后可用):"
+        echo "  repair-launcher    - 保留现有无障碍服务，恢复并核验 Projectivy (需先重新开启 ADB)"
         echo "  status             - 查看电视内存、闪存剩余空间与当前前台窗口"
         echo "  clean-bloat        - 清理预装儿童训练/云游戏/粤视厅等冗余包释放空间"
-        echo "  nas [地址]         - 一键输入您的群晖 NAS 地址 (默认 http://192.0.2.20:8096)"
+        echo "  nas <地址>         - 输入自己指定的 Jellyfin 服务器地址"
         echo "  text <内容>        - 隔空向电视输入框打字 (免遥控器敲网址/订阅链接)"
         echo "  push-mytv <文件>   - 免遥控器将本地直播源文件直推至 My-TV (/sdcard/Download/tv.txt)"
-        echo "  push-tvbox <URL>   - 通过 TVBox 9978 端口 API 免遥控器直推影视接口地址"
+        echo "  push-tvbox <URL>   - 向 TVBox 配置弹窗填写地址，需在电视按确定保存"
         echo "  mode-pure          - 1秒热切换至【长辈全屏看电视模式】"
         echo "  mode-apple         - 1秒热切换至【Apple TV 极简桌面】"
         echo "  hdmi1 / hdmi2      - 一键直达 HDMI 1 / HDMI 2 信号源 (切实体 Apple TV/主机)"

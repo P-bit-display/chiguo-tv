@@ -1,156 +1,57 @@
-# 🍎 ChiGuo (RedApple TV)
+# 🍎 ChiGuo · RedApple TV
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Project-ChiGuo%20RedApple-red?style=for-the-badge" alt="Project">
-  <img src="https://img.shields.io/badge/Style-Apple%20tvOS%20Aesthetics-black?style=for-the-badge&logo=apple" alt="Apple tvOS">
-  <img src="https://img.shields.io/badge/Platform-Android%20TV%20%7C%20MIUI%20TV%20%7C%20HyperOS-blue?style=for-the-badge&logo=android" alt="Platform">
-  <img src="https://img.shields.io/badge/Driven%20by-AI%20Agent-purple?style=for-the-badge&logo=openai" alt="AI Agent">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
-</p>
+[简体中文](README.md) · **English**
 
-<p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/P-bit-display/chiguo-tv@main/docs/banner.jpg" alt="ChiGuo · RedApple TV" width="100%">
-</p>
+A toolkit for configuring Projectivy and media apps on Redmi/Xiaomi Android TVs through local ADB. Root and firmware flashing are not required. Back up device settings before applying changes.
 
-<p align="center">
-  <b>English</b> · 
-  <a href="README.md">简体中文</a> · 
-  <a href="README.zh-TW.md">繁體中文</a> · 
-  <a href="README.ja.md">日本語</a> · 
-  <a href="README.ru.md">Русский</a> · 
-  <a href="README.es.md">Español</a>
-</p>
+## Verified on 2026-10-23
 
-<p align="center">
-  <b>Transform Redmi & Xiaomi Smart TVs into an Apple tvOS-style Minimalist Experience</b><br>
-  <i>Redmi (Red) + Apple = ChiGuo (赤果) · Pure, fast, and bloat-free</i>
-</p>
+Test device: MiTV-MFTP0, Android 9 / API 28, firmware 6129.
 
----
+- Jellyfin sign-in completed through Quick Connect; the user confirmed playback.
+- Repaired BBLL 1.5.5 (`com.V2.blb5`) worked. MyTV retaining a hardware decoder caused a separate black-screen issue that cleared after exiting MyTV.
+- Both TVBox configurations loaded catalogs: 153 family sites and 49 backup sites. One sampled title failed to play; catalog loading does not establish playback availability.
+- The local playlist contains 115 distinct channels in five groups, and TVBox recognized the groups. Channels were not individually playback-tested.
+- Firmware still disables ADB and may reset Projectivy accessibility after reboot. Automatic recovery and live-TV boot remain deferred.
+- AerialViews is installed, but automatic idle activation and video playback have not been verified.
 
-## 📖 Introduction
+See the [detailed device report](docs/调试记录-2026-10-23.md) and [TVBox import instructions](tvbox/README.md) in Chinese. Older design documents and translations describe plans and should not be treated as verified behavior.
 
-**ChiGuo (赤果)** is an open-source, automated tuning suite for Android TV, Xiaomi TV, and Redmi TV devices. Without root, bootloader unlocking, or bricking risks, it leverages **AI Agents + local Wi-Fi ADB** to deeply debloat stock bloatware and background telemetry, deploy an **Apple tvOS-styled minimal launcher**, and seamlessly integrate **instant boot-to-live-TV, 4K Bilibili, Synology NAS media libraries, SmartTube, and TV-optimized network routing**.
+## Usage
 
-> 💡 **Core Mission**: Modern smart TVs are heavily cluttered with boot advertisements, commercial video waterfalls, and background analytics. Elderly family members often struggle to find standard TV channels. ChiGuo restores the original essence of television: **instant viewing, zero clutter, and pure simplicity**.
+Requires Bash, curl, ADB, and Python 3 for discovery. Supply your own TV address explicitly:
 
----
-
-## 🔍 Key Features
-
-- ⚡ **Instant Boot to Live TV**: Boots straight into full-screen Live TV (CCTV / HD satellite channels) with zero startup ads. Elderly family members can switch channels seamlessly using the remote's up/down or number buttons.
-- 🍏 **Apple tvOS Minimal Aesthetics**: Powered by the battle-tested Projectivy Launcher featuring large rounded dynamic cards, frosted-glass backdrop blur, and instant Home-key access to a clean dock.
-- 🍃 **Deep Debloat & Offline Ad Purge**: Disables 9 stock advertising, telemetry, and storefront services. Physically clears the hidden `/sdcard` offline ad video cache so ads never replay even when offline. Frees up 40%–60% RAM.
-- 🍿 **Full-Stack Media Ecosystem**:
-  - **Bilibili TV (BBLL)**: Supports up to 4K 120Hz, Dolby Vision, and silky-smooth danmaku.
-  - **Private Home Cinema (Jellyfin)**: Direct LAN connection to Synology NAS media libraries with automated movie poster scraping and hardware VPU acceleration.
-  - **SmartTube (YouTube for TV)**: 4K/8K 60fps HDR playback, SponsorBlock integration, zero ad interruptions, and no Google Play Services dependency.
-  - **Stremio for Android TV**: The global gold-standard open-source media streaming aggregation hub with add-on community support.
-  - **Aurora Store (TV Edition)**: FOSS alternative to Google Play Store, enabling one-click installation of Netflix, Disney+, Prime Video, Spotify, and Twitch without GMS.
-  - **Private Home Cinema (Jellyfin)**: Direct LAN connection to Synology NAS media libraries with automated movie poster scraping and hardware VPU acceleration.
-  - **FlClash (TV-Optimized Proxy Client)**: 100% remote D-pad navigation support for rule-based routing (direct LAN/domestic streams, proxy for overseas media).
-  - **Apple TV 4K Aerial Screensaver (AerialViews)**: High-resolution slow-motion 4K aerial screensavers (ISS earth orbit, global landmarks) during idle standby.
-  - **LocalSend**: Cross-platform wireless LAN file/APK transfer from Mac, PC, or mobile without USB flash drives.
-- 🛡️ **Enterprise-Grade Stability & Soft-Brick Protection**: Includes pre-flight health verification before switching launchers, memory-killer (Anti-LMK) immunity white-listing, and 100% preservation of XiaoAI voice controls and HDMI-CEC input switching.
-- 🔄 **One-Click Reversible**: Includes a `restore.sh` rollback script that reinstates all stock components and the original Xiaomi launcher in 3 seconds.
-
----
-
-## ❓ Frequently Asked Questions (FAQ)
-
-**Q1: Does the XiaoAI / Voice Assistant button on the remote still work?**  
-A: **Yes, completely normal!** Our debloat policy strictly preserves `com.xiaomi.voiceassistant`. Pressing the voice button anywhere still summons the native translucent voice overlay for weather, volume control, and queries.
-
-**Q2: Will Mi Home (Smart Home / Smart Doorbell alerts) be affected?**  
-A: **Not affected at all!** The script preserves the Mi Home TV framework. Smart camera picture-in-picture, doorbell notifications, and home automations remain 100% intact.
-
-**Q3: How do I revert to the stock Xiaomi factory system?**  
-A: Simply run `./restore.sh <TV_IP>` on your computer. All stock packages and the original launcher will be re-enabled within 3 seconds, keeping your official warranty safe.
-
----
-
-## 🆚 ChiGuo vs CleanYourTV
-
-| Dimension | CleanYourTV (Upstream Project) | ChiGuo (This Project) |
-| :--- | :--- | :--- |
-| **Target Ecosystem** | US/European streaming only (Netflix, Prime, YouTube) | **Dual Global & Domestic Ecosystem** (Live TV, Bilibili 4K, Synology NAS, SmartTube, Clash) |
-| **Instant Live TV Boot** | ❌ Not supported (only boots to launcher) | ✅ **Natively supported** (boots directly to Live TV for elders; Home key returns to Apple UI) |
-| **Launcher Maturity** | Custom minimalist launcher (modifications require recompilation) | **Projectivy Launcher (tvOS Edition)** (dynamic blur, auto-start engine, focus zoom) |
-| **Network Proxy Routing**| ❌ No solution provided | ✅ **Integrated FlClash TV** (full D-pad remote navigation) |
-| **Ad Purging Depth** | Standard package disabling only | **Package disabling + physical removal of offline ad video cache** |
-| **Soft-Brick Protection** | Basic (disables stock launcher directly) | **Pre-flight verification** (tests new launcher execution before switching) |
-| **Port Security** | Emphasizes closing port 5555 after completion | **Fully adopted** (guided physical closure of ADB post-deployment) |
-
----
-
-## 🤖 Method 1: Autonomous Execution with AI Agents
-
-If you use [Claude Code](https://claude.com/product/claude-code), Cursor, Antigravity, or other terminal-capable AI Agents:
-
-1. On your TV: enable **Developer Options → Allow ADB Debugging**.
-2. Copy the contents of [`PROMPT.en.md`](PROMPT.en.md) and send it to your AI Agent.
-3. The AI Agent will automatically scan your LAN, connect via ADB, backup system state, and complete the deployment unattended.
-
----
-
-## 🛠️ Method 2: Manual One-Click Deployment (Dual-Mode)
-
-1. Ensure your computer and TV are on the same Wi-Fi / LAN network.
-2. Enable **ADB Debugging** on your TV (Settings → About → click OS Version 5 times → Developer Options → Allow ADB Debugging).
-3. Run the deployment script from your terminal:
-
-### Option A: All-in-One Dual-Mode (Recommended for Family & Geeks)
 ```bash
-./deploy.sh <TV_IP_ADDRESS>
+./tv_helper.sh <TV_IP> status
+./tv_helper.sh <TV_IP> screenshot
+./tv_helper.sh <TV_IP> nas <YOUR_JELLYFIN_URL>
+./tv_helper.sh <TV_IP> repair-launcher
 ```
-* **Experience**: Boots directly to ad-free Live TV channels. Pressing the remote's **Home** key brings up the sleek Apple tvOS-style launcher for Bilibili, Jellyfin NAS, YouTube, and music.
 
-### Option B: Dedicated TV-Only Kiosk Mode (Elderly Lock-in)
+`repair-launcher` preserves existing accessibility services and verifies the current binding. It requires ADB and does not persist authorization across reboot.
+
+For TVBox, open **Settings → Configuration address dialog** first, then run:
+
 ```bash
-./deploy.sh <TV_IP_ADDRESS> --pure-tv
+./tv_helper.sh <TV_IP> push-tvbox 'clan://localhost/Download/ChiGuoTVBox_20261023/config-family.json'
 ```
-* **Experience**: **Completely locks the TV into Live Broadcast mode**. Turning on the TV immediately shows live channels. Pressing Home or Back only shows the channel guide and **never exits to any smart launcher or settings menu**.
 
----
+This command uses TVBox's HTTP service without ADB. An HTTP `ok` only confirms submission. Check both address fields and select **Confirm** on the TV to save. Import the files and plugins described in [tvbox/README.md](tvbox/README.md) first.
 
-### 🛡️ One-Click Factory Restoration
-To restore the stock Xiaomi launcher and re-enable all original system components:
+## Initial deployment and rollback
+
 ```bash
-./restore.sh <TV_IP_ADDRESS>
+./deploy.sh <TV_IP> --lite
+./deploy.sh <TV_IP> --apple-tv
+./restore.sh <TV_IP>
 ```
 
----
+Deployment installs apps, changes system settings and switches the launcher. Do not rerun it merely to update an already tuned TV. `--pure-tv` opens MyTV at the end of deployment; it does not guarantee boot-to-live-TV or kiosk locking.
 
-## 🗂️ Repository Structure
+Bundled APKs are historical snapshots. The BBLL APK is not the repaired client used in the latest test; deployment skips it if `com.V2.blb5` is already installed. Accounts and content sources need separate configuration.
 
-```
-├── apks/                         # 10 core application packages (offline-ready)
-│   ├── ProjectivyLauncher.apk    # Apple tvOS minimal launcher
-│   ├── MyTV.apk                  # Live TV broadcast player
-│   ├── Clash.apk                 # TV-optimized proxy client (FlClash)
-│   ├── SmartTube.apk             # Ad-free 4K/8K YouTube client
-│   ├── BBLL.apk                  # Bilibili 4K Dolby client
-│   ├── Jellyfin.apk              # Home cinema client (Synology NAS)
-│   ├── TVBox.apk                 # Lightweight media aggregator
-│   ├── NetEaseMusic.apk          # Vinyl record audio player
-│   ├── AerialViews.apk           # 4K aerial screensavers
-│   └── LocalSend.apk             # Cross-platform LAN file transfer
-├── deploy.sh                     # 🚀 Automated deployment script (Dual-mode)
-├── restore.sh                    # 🛡️ Instant factory restore script
-├── PROMPT.en.md                  # 🤖 AI Agent standard prompt (English)
-├── PROMPT.md                     # 🤖 AI Agent standard prompt (Chinese)
-├── redmi_tv_apple_system_ultimate_spec.md # Technical architecture specification
-├── redmi_tv_red_blue_review.md   # 🔴🔵 10-round adversarial review report
-├── redmi_tv_test_cases_and_risks.md       # 14 end-to-end test cases
-└── LICENSE                       # MIT License
-```
+Rollback restores the stock launcher and selected settings, preserving other accessibility services. It is not a factory reset or a full restoration of saved values. `--uninstall-all` attempts removal of listed apps and does not delete every local configuration.
 
----
+Discovery requires `CHIGUO_SCAN_PREFIX` set to the first three octets of your own subnet; the project has no built-in home network addresses. `192.0.2.0/24` in historical examples is reserved documentation space.
 
-## ⚖️ Legal Disclaimer
-
-1. **Research & Educational Purpose**: This project represents technical research and personal device tuning exploration on Android TV systems for educational and personal maintenance purposes only.
-2. **Device Ownership & Control**: Users hold lawful ownership and exclusive control over their purchased hardware. This project does not crack bootloaders or tamper with hardware firmware; all operations rely on standard, publicly available Android ADB protocols.
-3. **Content & Copyright**: This project does not provide, host, or distribute any copyrighted media streams or pirated services. Third-party applications referenced belong to their respective open-source developers or original copyright holders.
-4. **Trademarks**: References to "Xiaomi", "Redmi", "Apple", "Apple TV", "tvOS", and "Bilibili" are used strictly for compatibility descriptions and aesthetic stylistic references. No endorsement or affiliation is implied.
-5. **User Responsibility**: Users assume responsibility for complying with applicable local laws, regulations, and hardware terms of service.
+Personal screenshots, device backups, credentials and local plugin caches must not be committed. [MIT](LICENSE) covers project code; third-party apps, sources and plugins retain their own terms. No universal playback, quality or firmware compatibility is guaranteed.

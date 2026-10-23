@@ -1,0 +1,10 @@
+{
+  "lives": [
+    {
+      "name": "苏州移动本地源",
+      "type": 0,
+      "url": "http://127.0.0.1:9978/file/Download/ChiGuoTVBox_20261023/suzhou_mobile.txt",
+      "playerType": 1
+    }
+  ]
+}

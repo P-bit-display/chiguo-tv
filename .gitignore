@@ -1,3 +1,13 @@
 backup/
 *.log
 .DS_Store
+
+# Local debugging output and device-specific source bundles
+tv_screen_*.png
+tvbox-sources-*/
+__pycache__/
+*.pyc
+# One-off local source generation helper (input file is not distributed)
+/generate_suzhou_iptv.py
+
+/tvbox/*.jar

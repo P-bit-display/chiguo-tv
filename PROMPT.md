@@ -1,3 +1,5 @@
+> 2026-10-23: Read [current device findings](docs/调试记录-2026-10-23.md) first. Do not rerun full deployment on an already tuned TV or claim persistent ADB/accessibility, automatic live boot, or screensaver playback without testing. Preserve existing accessibility services.
+
 # 赤果 (ChiGuo) · AI Agent 操作提示词 (Prompt)
 
 将以下提示词完整复制并发送给具备终端 Shell 权限的 AI 助手（如 Claude Code, Cursor, Antigravity, OpenDevin 等）：
@@ -21,7 +23,7 @@
 3. 彻底粉碎冗余后台服务：
    - 清除 /sdcard/Android/data/com.xiaomi.mitv.advertise/files/* 等离线缓存池。
    - 使用 pm disable-user --user 0 停用小米 9 大推荐、商城与大数据采集组件。
-   - 严禁禁用小爱同学语音服务 (com.xiaomi.voiceassistant)、蓝牙驱动与信号源设置。
+   - 严禁禁用小爱同学语音服务 (com.xiaomi.voicecontrol)、蓝牙驱动与信号源设置。
 4. 安装核心生态应用：
    - 安装 Projectivy Launcher (tvOS 风格桌面)、My-TV (开机电视直播)、FlClash (网络分流工具)、SmartTube (免广告YouTube)、Jellyfin (直连群晖)、BBLL (B站4K)、TVBox、网易云音乐、AerialViews (苹果4K屏保) 和 LocalSend。
 5. 桌面防软砖自检与切换：

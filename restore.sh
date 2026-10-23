@@ -1,31 +1,54 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# 赤果 (ChiGuo · RedApple TV) -> 1-Click Factory Rollback Script (v5.0)
-# Full state restoration including Accessibility, Screensaver & Verified Pkgs
+# 赤果 (ChiGuo · RedApple TV) -> Stock Launcher Rollback Script (v5.0)
+# Restore stock launcher and selected settings; not a factory reset
 # ==============================================================================
 
 set -e
 
-ADB_BIN="/opt/homebrew/bin/adb"
+ADB_BIN="${CHIGUO_ADB_BIN:-/opt/homebrew/bin/adb}"
 if [ ! -f "$ADB_BIN" ]; then
     ADB_BIN="$(which adb || true)"
 fi
 
-TV_IP="${1:-192.0.2.10}"
+TV_IP="${1:-}"
+if [ -z "$TV_IP" ]; then
+    echo "用法: ./restore.sh <电视IP> [参数]；请显式指定自己的设备。"
+    exit 1
+fi
 OPT="${2:-}" # Optional: --uninstall-all (彻底卸载12款第三方应用，用于售后保修无痕还原)
 TARGET="$TV_IP:5555"
 ADB=("$ADB_BIN" -s "$TARGET")
 
 echo "=========================================================="
-echo "          红米/小米电视 -> 一键恢复原厂系统桌面           "
+echo "          红米/小米电视 -> 恢复小米系统桌面           "
 echo "=========================================================="
 echo "[*] 正在连接电视: $TARGET ..."
 $ADB_BIN connect "$TARGET"
 
 echo "[*] 1/4: 正在解除第三方无障碍按键劫持与恢复原厂屏保..."
-# Clear Projectivy Accessibility Service so it stops hijacking HOME key!
-"${ADB[@]}" shell settings put secure enabled_accessibility_services "" >/dev/null 2>&1 || true
-"${ADB[@]}" shell settings put secure accessibility_enabled 0 >/dev/null 2>&1 || true
+# Remove only Projectivy; preserve XiaoAI and other accessibility services.
+PROJ_SERVICE="com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService"
+if ! CURRENT_SERVICES="$("${ADB[@]}" shell settings get secure enabled_accessibility_services)"; then
+    echo "[!] 无法读取原有无障碍服务，已停止恢复。"
+    exit 1
+fi
+CURRENT_SERVICES="${CURRENT_SERVICES//$'\r'/}"
+REMAINING_SERVICES=""
+IFS=':' read -r -a SERVICE_ITEMS <<< "$CURRENT_SERVICES"
+for service in "${SERVICE_ITEMS[@]}"; do
+    case "$service" in
+        ""|null|"$PROJ_SERVICE") continue ;;
+    esac
+    REMAINING_SERVICES="${REMAINING_SERVICES:+$REMAINING_SERVICES:}$service"
+done
+if [ -n "$REMAINING_SERVICES" ]; then
+    "${ADB[@]}" shell settings put secure enabled_accessibility_services "$REMAINING_SERVICES"
+    "${ADB[@]}" shell settings put secure accessibility_enabled 1
+else
+    "${ADB[@]}" shell settings delete secure enabled_accessibility_services
+    "${ADB[@]}" shell settings put secure accessibility_enabled 0
+fi
 "${ADB[@]}" shell settings delete secure screensaver_components >/dev/null 2>&1 || true
 
 echo "[*] 2/4: 正在重新启用小米原生桌面 (com.mitv.tvhome)..."
@@ -70,6 +93,8 @@ if [ "$OPT" == "--uninstall-all" ]; then
         "com.spocky.projengmenu"
         "com.github.mytv.android"
         "com.xx.blbl"
+        "com.xx.blbl1"
+        "com.V2.blb5"
         "org.jellyfin.androidtv"
         "com.neilturner.aerialviews"
         "org.smarttube.stable"
@@ -85,7 +110,7 @@ if [ "$OPT" == "--uninstall-all" ]; then
         echo "    [✓] 已卸载: $tpkg"
     done
     "${ADB[@]}" shell rm -f /sdcard/Download/tv.txt >/dev/null 2>&1 || true
-    echo "    [✓] 第三方应用与配置已全部清理完毕"
+    echo "    [✓] 已尝试卸载所列应用并删除 tv.txt；其他本地配置文件仍保留"
 fi
 
 # Send HOME key to immediately bring up Xiaomi Stock Launcher
@@ -93,5 +118,5 @@ fi
 
 echo ""
 echo "=========================================================="
-echo "             🎉 原厂小米系统已全部成功恢复！             "
+echo "             🎉 已执行桌面与所列设置恢复，请在电视端核对。             "
 echo "=========================================================="

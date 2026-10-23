@@ -1,0 +1,27 @@
+{
+  "snapshot_date": "2026-10-23",
+  "repository": "https://github.com/qist/tvbox",
+  "commit": "94e797a1daf727c51a8a61c91388dd52a29f0057",
+  "configs": {
+    "config-family.json": {
+      "upstream": "jsm.json",
+      "sites": 153
+    },
+    "config-backup.json": {
+      "upstream": "fty.json",
+      "sites": 49
+    }
+  },
+  "plugins": [
+    {
+      "file": "qist-spider.jar",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/jar/spider.jar",
+      "md5": "f302b3d8b3b84ad823a720966d9a1dfc"
+    },
+    {
+      "file": "qist-fan.jar",
+      "url": "https://raw.githubusercontent.com/qist/tvbox/94e797a1daf727c51a8a61c91388dd52a29f0057/jar/fan.txt",
+      "md5": "654fb7dcb0aeaaea7dba0e662395f38e"
+    }
+  ]
+}
