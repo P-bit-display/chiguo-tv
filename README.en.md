@@ -4,7 +4,7 @@
 
 A toolkit for configuring Projectivy and media apps on Redmi/Xiaomi Android TVs through local ADB. Root and firmware flashing are not required. Back up device settings before applying changes.
 
-## Verified on 2026-10-23
+## Verified through 2026-10-24
 
 Test device: MiTV-MFTP0, Android 9 / API 28, firmware 6129.
 
@@ -12,7 +12,9 @@ Test device: MiTV-MFTP0, Android 9 / API 28, firmware 6129.
 - Repaired BBLL 1.5.5 (`com.V2.blb5`) worked. MyTV retaining a hardware decoder caused a separate black-screen issue that cleared after exiting MyTV.
 - The default three-entry TVBox configuration played a public archive video. Both larger configurations loaded catalogs: 153 family sites and 49 backup sites. One sampled title failed to play; catalog loading does not establish playback availability.
 - The local playlist now contains 112 channels after removing three HTTP 404 sources confirmed on both the computer and TV. One sampled live channel rendered video; the rest were checked for HLS manifest availability only.
-- Firmware still disables ADB and may reset Projectivy accessibility after reboot. Automatic recovery and live-TV boot remain deferred.
+- Firmware still disables ADB and may reset Projectivy accessibility. AccessibilityManager 10.3 restored a simulated removal in about 0.5 seconds while preserving voice services. Bindings were healthy after one real reboot; daemon boot startup still needs final verification.
+- Disabling MyTV `videoPlayerSkipMultipleFramesOnSameVSync` resolved the short live-TV loop, confirmed by the user.
+- NetEase Filmly TV 2.6.23 was installed and connected; the user confirmed both picture and sound. Other players were stopped for the comparison.
 - AerialViews manual preview now renders video with TextureView enabled, H.264 1080p and tunneling disabled. Automatic idle activation remains unverified.
 
 See the [detailed device report](docs/调试记录-2026-10-23.md) and [TVBox import instructions](tvbox/README.md) in Chinese. Older design documents and translations describe plans and should not be treated as verified behavior.
@@ -57,3 +59,5 @@ Discovery requires `CHIGUO_SCAN_PREFIX` set to the first three octets of your ow
 Personal screenshots, device backups, credentials and local plugin caches must not be committed. [MIT](LICENSE) covers project code; third-party apps, sources and plugins retain their own terms. No universal playback, quality or firmware compatibility is guaranteed.
 
 Build the verified local bundle with Python 3.9+: `python3 tools/prepare_tvbox.py --output tvbox/build`. Downloads are pinned and SHA256 checked; generated files and third-party JARs are excluded from Git. See the Chinese TVBox guide for installation and limitations.
+
+See the [2026-10-24 report](docs/调试记录-2026-10-24.md) for permissions and verification limits. Disable or uninstall AccessibilityManager before running `restore.sh`, since its guard can re-enable Projectivy.
