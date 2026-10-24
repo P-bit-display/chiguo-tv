@@ -14,3 +14,10 @@ __pycache__/
 
 # Generated, verified TVBox bundle (third-party assets)
 /tvbox/build/
+
+# Local proxy and private configs
+*Proxy*.yaml
+*proxy*.yaml
+generate_clash_config.py
+ImmichTV-*.apk
+

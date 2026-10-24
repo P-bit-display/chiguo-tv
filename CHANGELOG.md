@@ -1,6 +1,23 @@
 # 更新记录
 
-## 2026-10-24 · 播放兼容与无障碍恢复
+## 2026-10-24 (下午) · 桌面重构升级 Aerial TV、深度净化去广告、网络分流突破与性能调优
+
+- **桌面迁移至 Aerial TV**：升级至 Apple TV tvOS 风格的开源 Aerial TV（v1.41，`app.orchard.tv`）。支持毛玻璃 Dock 栏、Top Shelf 顶部预览与控制中心，内置 114 个 Apple TV 4K 航拍屏保，替代并卸载了原本冗余的独立 AerialViews 屏保。
+- **第二阶段深度去广告与系统瘦身**：
+  - 彻底卸载清理 18 项小米电视系统级广告、埋点统计、游戏大厅、弹窗推送与收费组件（`com.miui.analytics`, `com.miui.tv.analytics`, `com.xiaomi.statistic`, `com.xm.webcontent`, `com.xiaomi.mitv.tvpush.tvpushservice`, `com.mitv.screensaver`, `com.xiaomi.mibox.lockscreen`, `com.cmgame.gamehall.xmtv`, `com.xiaomi.gamecenter.sdk.service.mibox`, `com.tencent.start.tv`, `com.mitv.shoplugin`, `com.xiaomi.mitv.pay`, `com.xiaomi.mitv.payment`, `com.xiaomi.mitv.karaoke.service`, `com.xiaomi.eetv.exhibition`, `com.xiaomi.mitv.handbook`, `com.xiaomi.mitv.healthdiagnosis`, `com.lutongnet.nldmxXiaomiChildren`, `com.tvbc.mddtv`）。
+  - 清理多余第三方应用（AerialViews 屏保、Aurora Store、AccessibilityManager）。
+  - 释放可用磁盘空间至 15 GB，空闲运行内存恢复至 740 MB+。
+- **系统性能提速调优**：
+  - 全局动画缩放统一降至 0.5x，大幅消除芯片界面渲染粘滞感。
+  - 对核心影音应用执行全量 AOT Speed 本地机器码编译（Aerial TV、我的电视、Jellyfin、BBLL、电视直播、LocalSend、Immich TV），冷启动速度提升约 30%~50%。
+- **新增 Immich TV 私有云相册支持**：安装 Immich Android TV（v6.2.0），并完成本地 Docker 服务自动化配对与大屏照片浏览。
+- **FlClash 代理与 Android TV 关键分流突破**：
+  - 支持多协议节点合流导入 Clash Meta (Mihomo) 配置并提供 Android TV 专用模板（`tools/clash_template_androidtv.yaml`）。
+  - **核心网络修复**：开启 FlClash 应用访问控制「白名单模式」，仅允许 SmartTube 走 VPN 代理，彻底根治此前 TUN 虚拟网卡黑洞阻断全局 IPv6、导致 Jellyfin 无法连接服务器与 IPTV 直播异常的痛点。
+- **ADB 安全策略**：注销并停用 Aerial 的 `keep_adb` 自动保持守护，电视重启后不主动对外暴露 ADB 调试端口。
+- **生态扩展调研**：增加鸿蒙电视（华为智慧屏）在桌面替换、单机代理及纯血鸿蒙演进下的可行性调研记录。
+
+## 2026-10-24 (上午) · 播放兼容与无障碍恢复
 
 - 安装官方网易爆米花 TV 2.6.23，用户确认连接后的画面和声音正常。
 - MyTV 仅关闭“跳过渲染多帧”，用户确认测试频道恢复连续播放、不再循环。

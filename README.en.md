@@ -12,10 +12,13 @@ Test device: MiTV-MFTP0, Android 9 / API 28, firmware 6129.
 - Repaired BBLL 1.5.5 (`com.V2.blb5`) worked. MyTV retaining a hardware decoder caused a separate black-screen issue that cleared after exiting MyTV.
 - The default three-entry TVBox configuration played a public archive video. Both larger configurations loaded catalogs: 153 family sites and 49 backup sites. One sampled title failed to play; catalog loading does not establish playback availability.
 - The local playlist now contains 112 channels after removing three HTTP 404 sources confirmed on both the computer and TV. One sampled live channel rendered video; the rest were checked for HLS manifest availability only.
-- Firmware still disables ADB and may reset Projectivy accessibility. AccessibilityManager 10.3 restored a simulated removal in about 0.5 seconds while preserving voice services. Bindings were healthy after one real reboot; daemon boot startup still needs final verification.
-- Disabling MyTV `videoPlayerSkipMultipleFramesOnSameVSync` resolved the short live-TV loop, confirmed by the user.
-- NetEase Filmly TV 2.6.23 was installed and connected; the user confirmed both picture and sound. Other players were stopped for the comparison.
-- AerialViews manual preview now renders video with TextureView enabled, H.264 1080p and tunneling disabled. Automatic idle activation remains unverified.
+- **Minimalist Launcher**: Upgraded to **Aerial TV (v1.41)** featuring native Apple TV tvOS frosted glass dock, Top Shelf previews, and Control Center. Sits as default system HOME.
+- **Aerial Screensaver**: Native 114 Apple TV 4K screensavers integrated inside Aerial TV; standalone AerialViews app uninstalled.
+- **Deep Debloat**: Purged 18 system bloatware packages (telemetry, ad injectors, lockscreen ads, game centers, pay services). Storage free: 15 GB; free RAM: 740 MB+.
+- **Performance Tuning**: Global animation scales lowered to 0.5x; core apps (Aerial TV, MyTV, Jellyfin, BBLL, Live TV, LocalSend, Immich) fully AOT-compiled (`-m speed`).
+- **FlClash & SmartTube Proxy Routing**: Configured FlClash with **Whitelist App Access Control (only SmartTube enters VPN)**. Completely resolved the TUN IPv6 blackhole that previously blocked Jellyfin and native IPv6.
+- **Private Cloud Services**: Jellyfin operates over native dual-stack IPv6 (17ms ping); Immich TV (v6.2.0) paired for large-screen photos.
+- **ADB Security Policy**: Disabled Aerial's `keep_adb` daemon so port 5555 is not automatically exposed after TV reboots.
 
 See the [detailed device report](docs/调试记录-2026-10-23.md) and [TVBox import instructions](tvbox/README.md) in Chinese. Older design documents and translations describe plans and should not be treated as verified behavior.
 

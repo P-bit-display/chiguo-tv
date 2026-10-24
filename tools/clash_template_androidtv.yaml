@@ -1,0 +1,109 @@
+# Android TV 专用 Clash Meta (Mihomo) / FlClash 配置文件模板
+# 优化重点：
+# 1. 局域网全放行（保证内网 NAS、Jellyfin、Immich、LocalSend 极速直连）
+# 2. 国内音视频/直播流直连（保证 IPTV、B站等不走代理且零延迟）
+# 3. 配合 FlClash「应用访问控制 - 白名单模式」使用，避免 TUN 网卡黑洞阻断全局 IPv6
+
+port: 7890
+socks-port: 7891
+mixed-port: 7892
+allow-lan: true
+mode: rule
+log-level: info
+ipv6: false
+external-controller: 127.0.0.1:9090
+
+tun:
+  enable: true
+  stack: system
+  dns-hijack:
+    - tcp://any:53
+    - udp://any:53
+  auto-route: true
+  auto-detect-interface: true
+
+dns:
+  enable: true
+  listen: 127.0.0.1:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - system
+  fallback:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+
+# 在此处填入您的节点列表（支持 VLESS-Reality, Hysteria2, Trojan 等）
+proxies:
+  - name: "示例节点_VLESS-Reality"
+    type: vless
+    server: server.example.com
+    port: 443
+    uuid: 00000000-0000-0000-0000-000000000000
+    cipher: auto
+    tls: true
+    flow: xtls-rprx-vision
+    servername: www.bing.com
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: ExamplePublicKeyBase64====================
+      short-id: 0123456789abcdef
+
+proxy-groups:
+  - name: "🚀 节点选择"
+    type: select
+    proxies:
+      - "♻️ 自动优选"
+      - "DIRECT"
+      - "示例节点_VLESS-Reality"
+
+  - name: "♻️ 自动优选"
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - "示例节点_VLESS-Reality"
+
+  - name: "🎥 YouTube / 海外影音"
+    type: select
+    proxies:
+      - "🚀 节点选择"
+      - "♻️ 自动优选"
+      - "DIRECT"
+
+  - name: "🎯 全球直连"
+    type: select
+    proxies:
+      - "DIRECT"
+
+rules:
+  # 局域网与内网段直连（必须优先保障 NAS / Jellyfin / Immich / IPTV 直播）
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+
+  # 国内主流流媒体与系统服务直连
+  - DOMAIN-SUFFIX,cn,DIRECT
+  - DOMAIN-KEYWORD,bilibili,DIRECT
+  - DOMAIN-KEYWORD,bilivideo,DIRECT
+  - DOMAIN-KEYWORD,iqiyi,DIRECT
+  - DOMAIN-KEYWORD,youku,DIRECT
+  - DOMAIN-KEYWORD,tencent,DIRECT
+  - DOMAIN-KEYWORD,xiaomi,DIRECT
+  - DOMAIN-KEYWORD,mitv,DIRECT
+  - GEOIP,CN,DIRECT
+
+  # 海外应用与流媒体代理
+  - GEOSITE,youtube,🎥 YouTube / 海外影音
+  - GEOSITE,google,🚀 节点选择
+  - GEOSITE,netflix,🎥 YouTube / 海外影音
+  - GEOSITE,telegram,🚀 节点选择
+  - GEOSITE,geolocation-!cn,🚀 节点选择
+  - MATCH,🚀 节点选择
