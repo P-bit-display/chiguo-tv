@@ -163,7 +163,27 @@ flowchart TD
 * 电视进入：**「设置」 → 「关于」 → 连续点击「MIUI TV 版本号」7 次** 开启开发者模式；
 * 进入：**「设置」 → 「账号与安全」 → 将「ADB 调试」设为“允许”**。
 
-### 2. 辅助脚本一览 (`tv_helper.sh`)
+---
+
+### 2. 部署方式选择
+
+#### 方式 A：小白用户 / 非 Agent 用户「零门槛双击一键安装」（推荐）
+完全免配环境、无需事先安装 ADB，内置自动寻机与故障排查：
+* **🪟 Windows 用户**：直接解压或克隆本仓库，鼠标双击运行根目录下的 **`一键安装.bat`** 即可。脚本会自动检查或下载绿色版 ADB，自动探测局域网电视 IP 并提供可视化交互菜单。
+* **🍎 macOS 用户**：双击运行根目录下的 **`一键安装.command`**（首次运行若提示未签名，右键点击“打开”即可），全自动执行环境检查与极简改装。
+
+#### 方式 B：AI Agent 自动化部署（Antigravity / Claude Code / Cursor）
+* **内置 Skill**：项目已收录官方 Agent Skill（位于 [`skills/chiguo-tv/SKILL.md`](skills/chiguo-tv/SKILL.md)）。在 Antigravity 中只需呼叫该技能即可由 Agent 全权自动化探测、安全备份、防变砖自检并交付。
+* **通用 AI 提示词**：如果不具备原生 Skill 支持，可直接复制项目提供的 [`PROMPT.md`](PROMPT.md) 发送给您的 AI 终端助手。
+
+#### 方式 C：极客终端单行命令 (macOS / Linux)
+```bash
+curl -fsSL https://raw.githubusercontent.com/P-bit-display/chiguo-tv/main/install.sh | bash
+```
+
+---
+
+### 3. 辅助脚本一览 (`tv_helper.sh`)
 项目提供了高度自动化的交互式辅助脚本，避免盲目输入冗长 ADB 指令：
 
 ```bash
