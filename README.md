@@ -100,7 +100,7 @@
 
 ```mermaid
 flowchart TD
-    subgraph TV["红米 / 小米 Android 电视 (192.168.50.41)"]
+    subgraph TV["红米 / 小米 Android 电视 (192.168.x.x)"]
         subgraph Apps["影音应用生态"]
             ST["SmartTube (YouTube)"]
             JF["Jellyfin 4K 影院"]
@@ -116,17 +116,17 @@ flowchart TD
         end
     end
 
-    subgraph HomeLAN["家庭局域网 (192.168.50.0/24)"]
-        NAS["群晖 NAS (Jellyfin 媒体库)"]
-        MAC["Mac mini (Docker Immich 服务器)"]
-        ROUTER["路由器 (Wi-Fi 5GHz 866Mbps / 移动 IPv6)"]
+    subgraph HomeLAN["家庭局域网 (192.168.x.0/24)"]
+        NAS["家庭 NAS (Jellyfin 媒体库)"]
+        SRV["家庭服务器 / 主机 (Immich 照片服务)"]
+        ROUTER["路由器 (Wi-Fi 5GHz / 运营商 IPv6)"]
     end
 
     subgraph Internet["互联网与云服务"]
-        CF["Cloudflare (jelly-cf / immich 域名)"]
+        CF["云端服务 / 穿透服务 (Jellyfin / 远程连接)"]
         BILI["哔哩哔哩 (国内 CDN)"]
-        OP["江苏移动运营商 IPTV 节点"]
-        PROXY["海外代理节点 (Reality / Hy2 / Trojan)"]
+        OP["运营商 IPTV 直播节点"]
+        PROXY["代理节点 (分流加速)"]
         YT["YouTube 官方 4K 服务器"]
     end
 

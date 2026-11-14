@@ -20,4 +20,9 @@ __pycache__/
 *proxy*.yaml
 generate_clash_config.py
 ImmichTV-*.apk
+.env*
+*.key
+*.pem
+*token*
+*secret*
 

@@ -35,7 +35,7 @@ if [ -z "$ADB_BIN" ]; then
 fi
 
 # 2. 询问电视 IP
-read -p "请输入电视 IP 地址 (如 192.168.50.41): " TV_IP
+read -p "请输入电视 IP 地址 (如 192.168.1.100): " TV_IP
 if [ -z "$TV_IP" ]; then
     echo "[!] 电视 IP 不能为空。"
     exit 1
